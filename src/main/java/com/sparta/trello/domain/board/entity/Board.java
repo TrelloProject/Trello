@@ -1,7 +1,12 @@
 package com.sparta.trello.domain.board.entity;
 
 import com.sparta.trello.common.TimeStampEntity;
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -10,6 +15,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Table(name = "board")
 public class Board extends TimeStampEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -18,7 +24,7 @@ public class Board extends TimeStampEntity {
     private String title;
 
     @Column
-    private String headColumnId;
+    private Long headDeckId;
 
     @Column
     private String description;

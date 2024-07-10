@@ -4,6 +4,7 @@ import com.sparta.trello.exception.custom.exam.ExamException;
 import com.sparta.trello.common.response.DataResponseDto;
 import com.sparta.trello.common.response.MessageResponseDto;
 import com.sparta.trello.common.response.ResponseUtils;
+import com.sparta.trello.exception.custom.user.UserException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,6 +24,12 @@ public class GlobalExceptionAdvice {
     public ResponseEntity<MessageResponseDto> handleExamException(ExamException e) {
         log.error("예시 에러: ", e);
         return ResponseUtils.of(e.getExamCodeEnum().getHttpStatus(), e.getMessage());
+    }
+
+    @ExceptionHandler(UserException.class)
+    public ResponseEntity<MessageResponseDto> handleUserException(UserException e) {
+        log.error("예시 에러: ", e);
+        return ResponseUtils.of(e.getUserCodeEnum().getHttpStatus(), e.getMessage());
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
