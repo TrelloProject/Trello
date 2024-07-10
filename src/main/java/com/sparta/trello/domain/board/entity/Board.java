@@ -1,7 +1,6 @@
-package com.sparta.trello.domain.column;
+package com.sparta.trello.domain.board.entity;
 
 import com.sparta.trello.common.TimeStampEntity;
-import com.sparta.trello.domain.board.Board;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -9,8 +8,8 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor
-@Table(name = "deck")
-public class Deck extends TimeStampEntity {
+@Table(name = "board")
+public class Board extends TimeStampEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -19,12 +18,8 @@ public class Deck extends TimeStampEntity {
     private String title;
 
     @Column
-    private Long next_id;
+    private String headColumnId;
 
     @Column
-    private Long headCardId;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "board_id", nullable = false)
-    private Board board;
+    private String description;
 }

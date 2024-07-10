@@ -1,7 +1,8 @@
 package com.sparta.trello.domain.card.entity;
 
 import com.sparta.trello.common.TimeStampEntity;
-import com.sparta.trello.domain.column.Deck;
+import com.sparta.trello.domain.deck.Deck;
+import com.sparta.trello.domain.user.entity.User;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -17,7 +18,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @Entity
-@Table(name = "cards")
+@Table(name = "card")
 public class Card extends TimeStampEntity {
 
     @Id

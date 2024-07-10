@@ -2,6 +2,7 @@ package com.sparta.trello.domain.comment.entity;
 
 import com.sparta.trello.common.TimeStampEntity;
 import com.sparta.trello.domain.card.entity.Card;
+import com.sparta.trello.domain.user.entity.User;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;

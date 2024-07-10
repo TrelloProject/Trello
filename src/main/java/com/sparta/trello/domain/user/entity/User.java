@@ -15,11 +15,16 @@ public class User extends TimeStampEntity {
     private Long id;
 
     private String name;
+
     private String username;
+
     private String password;
+
     private String refreshToken;
+
     @Enumerated(EnumType.STRING)
     private UserStatus userStatus;
+
     @Enumerated(EnumType.STRING)
     private UserAuthRole authRole;
 }
