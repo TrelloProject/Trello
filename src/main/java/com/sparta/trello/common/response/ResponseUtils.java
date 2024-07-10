@@ -61,4 +61,10 @@ public abstract class ResponseUtils {
                         HttpStatus.OK.value(), "수정 성공"
                 ));
     }
+
+    public static ResponseEntity<MessageResponseDto> moveOk() {
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(new MessageResponseDto(HttpStatus.OK.value(), "이동 성공"
+                ));
+    }
 }

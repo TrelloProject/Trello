@@ -31,11 +31,17 @@ public class Deck extends TimeStampEntity {
     private Board board;
 
     @Builder
-    public Deck(String title){
+    public Deck(String title, Long nextId, Board board){
+        this.title = title;
+        this.nextId = nextId;
+        this.board = board;
+    }
+
+    public void updateTitle(String title){
         this.title = title;
     }
 
-    public void updateDeck(String title){
-        this.title = title;
+    public void updateNextId(Long nextId){
+        this.nextId = nextId;
     }
 }

@@ -2,6 +2,7 @@ package com.sparta.trello.domain.deck.controller;
 
 import com.sparta.trello.common.response.MessageResponseDto;
 import com.sparta.trello.common.response.ResponseUtils;
+import com.sparta.trello.domain.deck.dto.DeckMoveRequestDto;
 import com.sparta.trello.domain.deck.dto.DeckRequestDto;
 import com.sparta.trello.domain.deck.service.DeckService;
 import jakarta.validation.Valid;
@@ -22,12 +23,13 @@ public class DeckController {
      * @param requestDto 생성할 deck 정보
      * @return 생성 성공 메세지 전송
      */
-    @PostMapping
+    @PostMapping("/{boardId}")
     public ResponseEntity<MessageResponseDto> createDeck(
 //            @AuthenticationPrincipal AuthenticationUser user,
+            @PathVariable Long boardId,
             @Valid @RequestBody DeckRequestDto requestDto){
 
-//        deckService.createDeck(user, requestDto);
+//        deckService.createDeck(user, boardId, requestDto);
         return ResponseUtils.createDeckOk();
     }
 
@@ -64,12 +66,15 @@ public class DeckController {
         return ResponseUtils.deleteOk();
     }
 
-    @PatchMapping("/{deckid}")
+    @PatchMapping("/{deckId}")
     public ResponseEntity<MessageResponseDto> moveDeck(
-            @PathVariable Long deckid//            @AuthenticationPrincipal AuthenticationUser user
+            @PathVariable Long deckId,
+            @RequestBody DeckMoveRequestDto requestDto
+            //            @AuthenticationPrincipal AuthenticationUser user
     ){
 
-        deckService.mo
+//        deckService.moveDeck(user, deckId, requestDto.getPosition());
+        return ResponseUtils.moveOk();
     }
 
 }
