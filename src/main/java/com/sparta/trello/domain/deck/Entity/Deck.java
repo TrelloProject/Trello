@@ -3,6 +3,7 @@ package com.sparta.trello.domain.deck.Entity;
 import com.sparta.trello.common.TimeStampEntity;
 import com.sparta.trello.domain.board.entity.Board;
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -27,4 +28,13 @@ public class Deck extends TimeStampEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "board_id", nullable = false)
     private Board board;
+
+    @Builder
+    public Deck(String title){
+        this.title = title;
+    }
+
+    public void updateDeck(String title){
+        this.title = title;
+    }
 }
