@@ -7,4 +7,5 @@ import org.springframework.context.annotation.Configuration;
 //@EnableWebSecurity
 @RequiredArgsConstructor
 public class WebSecurityConfig {
+
 }

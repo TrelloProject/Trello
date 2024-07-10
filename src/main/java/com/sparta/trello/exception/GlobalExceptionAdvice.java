@@ -25,7 +25,11 @@ public class GlobalExceptionAdvice {
         return ResponseUtils.of(e.getExamCodeEnum().getHttpStatus(), e.getMessage());
     }
 
-
+    @ExceptionHandler(UserException.class)
+    public ResponseEntity<MessageResponseDto> handleUserException(UserException e) {
+        log.error("예시 에러: ", e);
+        return ResponseUtils.of(e.getUserCodeEnum().getHttpStatus(), e.getMessage());
+    }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<DataResponseDto<List<String>>> handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
