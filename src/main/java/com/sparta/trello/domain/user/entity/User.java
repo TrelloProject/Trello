@@ -21,5 +21,5 @@ public class User extends TimeStampEntity {
     @Enumerated(EnumType.STRING)
     private UserStatus userStatus;
     @Enumerated(EnumType.STRING)
-    private UserRole userRole;
+    private UserAuthRole authRole;
 }
