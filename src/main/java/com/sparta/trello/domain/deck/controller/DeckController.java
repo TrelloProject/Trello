@@ -32,7 +32,7 @@ public class DeckController {
     }
 
     /**
-     * deck 생성
+     * deck 수정
 //     * @param user 로그인 유저
      * @param requestDto 수정할 deck 정보
      * @param deckId 수정할 deck id
@@ -62,6 +62,14 @@ public class DeckController {
 
 //        deckService.deleteDeck(user, deckId);
         return ResponseUtils.deleteOk();
+    }
+
+    @PatchMapping("/{deckid}")
+    public ResponseEntity<MessageResponseDto> moveDeck(
+            @PathVariable Long deckid//            @AuthenticationPrincipal AuthenticationUser user
+    ){
+
+        deckService.mo
     }
 
 }
