@@ -1,4 +1,4 @@
-package com.sparta.trello.domain.deck;
+package com.sparta.trello.domain.deck.Entity;
 
 import com.sparta.trello.common.TimeStampEntity;
 import com.sparta.trello.domain.board.entity.Board;

@@ -18,7 +18,7 @@ public class Board extends TimeStampEntity {
     private String title;
 
     @Column
-    private String headColumnId;
+    private Long headDeckId;
 
     @Column
     private String description;
