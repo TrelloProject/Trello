@@ -47,4 +47,18 @@ public abstract class ResponseUtils {
                 HttpStatus.OK.value(), "삭제 성공"
             ));
     }
+
+    public static ResponseEntity<MessageResponseDto> createOk() {
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(new MessageResponseDto(
+                        HttpStatus.OK.value(), "생성 성공"
+                ));
+    }
+
+    public static ResponseEntity<MessageResponseDto> updateOk() {
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(new MessageResponseDto(
+                        HttpStatus.OK.value(), "수정 성공"
+                ));
+    }
 }
