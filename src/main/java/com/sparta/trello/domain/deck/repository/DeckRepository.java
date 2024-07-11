@@ -1,7 +1,7 @@
 package com.sparta.trello.domain.deck.repository;
 
 import com.sparta.trello.domain.board.entity.Board;
-import com.sparta.trello.domain.deck.Entity.Deck;
+import com.sparta.trello.domain.deck.entity.Deck;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

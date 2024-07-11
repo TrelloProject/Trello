@@ -3,7 +3,7 @@ package com.sparta.trello.domain.deck.controller;
 import com.sparta.trello.auth.UserDetailsImpl;
 import com.sparta.trello.common.response.MessageResponseDto;
 import com.sparta.trello.common.response.ResponseUtils;
-import com.sparta.trello.domain.deck.dto.DeckMoveRequestDto;
+import com.sparta.trello.domain.deck.dto.MoveDeckRequestDto;
 import com.sparta.trello.domain.deck.dto.DeckRequestDto;
 import com.sparta.trello.domain.deck.service.DeckService;
 import jakarta.validation.Valid;
@@ -79,7 +79,7 @@ public class DeckController {
     @PatchMapping("/{deckId}")
     public ResponseEntity<MessageResponseDto> moveDeck(
             @PathVariable Long deckId,
-            @RequestBody DeckMoveRequestDto requestDto,
+            @RequestBody MoveDeckRequestDto requestDto,
             @AuthenticationPrincipal UserDetailsImpl user
     ){
         deckService.moveDeck(user.getUser(), deckId, requestDto.getPosition());

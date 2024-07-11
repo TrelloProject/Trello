@@ -1,17 +1,14 @@
 package com.sparta.trello.domain.deck.repository;
 
 import com.sparta.trello.domain.board.entity.Board;
-import com.sparta.trello.domain.deck.Entity.Deck;
+import com.sparta.trello.domain.deck.entity.Deck;
 import com.sparta.trello.exception.custom.deck.detail.DeckCodeEnum;
 import com.sparta.trello.exception.custom.deck.detail.DeckDetailCustomException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
-import java.util.Comparator;
 import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Component
@@ -22,10 +19,6 @@ public class DeckAdapter {
     public Deck findById(Long deckId){
         return deckRepository.findById(deckId).orElseThrow(() ->
                 new DeckDetailCustomException(DeckCodeEnum.DECK_NOT_FOUND));
-    }
-
-    public List<Deck> findByAll(){
-        return deckRepository.findAll();
     }
 
     public List<Deck> findByBoard(Board board){

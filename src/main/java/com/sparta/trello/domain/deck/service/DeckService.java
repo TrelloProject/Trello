@@ -2,7 +2,7 @@ package com.sparta.trello.domain.deck.service;
 
 import com.sparta.trello.domain.board.entity.Board;
 import com.sparta.trello.domain.board.repository.BoardRepository;
-import com.sparta.trello.domain.deck.Entity.Deck;
+import com.sparta.trello.domain.deck.entity.Deck;
 import com.sparta.trello.domain.deck.dto.DeckRequestDto;
 import com.sparta.trello.domain.deck.repository.DeckAdapter;
 import com.sparta.trello.domain.user.entity.User;
@@ -33,8 +33,6 @@ public class DeckService {
      */
     @Transactional
     public void createDeck(User user, Long boardId, DeckRequestDto requestDto) {
-        userAdapter.findByUsername(user.getUsername());
-
         //임시코드
         Board board = boardRepository.findById(boardId).orElseThrow(() ->
                 new DeckDetailCustomException(DeckCodeEnum.DECK_NOT_FOUND));
@@ -73,7 +71,6 @@ public class DeckService {
      */
     @Transactional
     public void updateDeck(User user, Long deckId, DeckRequestDto requestDto){
-        userAdapter.findByUsername(user.getUsername());
         Deck deck = deckAdapter.findById(deckId);
         deck.updateTitle(requestDto.getTitle());
     }
@@ -85,8 +82,6 @@ public class DeckService {
      */
     @Transactional
     public void deleteDeck(User user, Long deckId){
-        userAdapter.findByUsername(user.getUsername());
-
         Deck currentDeck = deckAdapter.findById(deckId);
         Board board = currentDeck.getBoard();
         List<Deck> deckList = deckAdapter.findByBoard(board);
@@ -103,8 +98,6 @@ public class DeckService {
      */
     @Transactional
     public void moveDeck(User user, Long deckId, Long index){
-        userAdapter.findByUsername(user.getUsername());
-
         Deck currentDeck = deckAdapter.findById(deckId);
         Board board = currentDeck.getBoard();
         List<Deck> deckList = deckAdapter.findByBoard(board);
@@ -113,7 +106,6 @@ public class DeckService {
 
         if (index == 0) {
             // deck을 첫 번째 위치로 이동
-            Deck headDeck = deckAdapter.findById(board.getHeadDeckId());
             currentDeck.updateNextId(board.getHeadDeckId());
             board.updateHeadDeckId(currentDeck.getId());
         } else {

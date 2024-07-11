@@ -1,7 +1,7 @@
 package com.sparta.trello.domain.card.entity;
 
 import com.sparta.trello.common.TimeStampEntity;
-import com.sparta.trello.domain.deck.Entity.Deck;
+import com.sparta.trello.domain.deck.entity.Deck;
 import com.sparta.trello.domain.user.entity.User;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
