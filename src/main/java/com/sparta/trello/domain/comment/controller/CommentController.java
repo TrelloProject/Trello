@@ -1,10 +1,8 @@
 package com.sparta.trello.domain.comment.controller;
 
 import com.sparta.trello.auth.UserDetailsImpl;
-import com.sparta.trello.common.response.DataResponseDto;
 import com.sparta.trello.common.response.MessageResponseDto;
 import com.sparta.trello.common.response.ResponseUtils;
-import com.sparta.trello.domain.comment.dto.CommentResponseDto;
 import com.sparta.trello.domain.comment.dto.CreateCommentRequestDto;
 import com.sparta.trello.domain.comment.dto.UpdateCommentRequestDto;
 import com.sparta.trello.domain.comment.service.CommentService;
@@ -30,23 +28,22 @@ public class CommentController {
     private final CommentService commentService;
 
     @PostMapping
-    public ResponseEntity<DataResponseDto<CommentResponseDto>> createComment(
+    public ResponseEntity<MessageResponseDto> createComment(
         @Valid @RequestBody CreateCommentRequestDto createCommentRequestDto,
         @AuthenticationPrincipal UserDetailsImpl userDetails) {
 
-        return ResponseUtils.createOk(
-            commentService.createComment(createCommentRequestDto, userDetails.getUser()));
+        commentService.createComment(createCommentRequestDto, userDetails.getUser());
+        return ResponseUtils.createOk();
     }
 
     @PutMapping("/{commentId}")
-    public ResponseEntity<DataResponseDto<CommentResponseDto>> updateComment(
+    public ResponseEntity<MessageResponseDto> updateComment(
         @PathVariable Long commentId,
         @Valid @RequestBody UpdateCommentRequestDto updateCommentRequestDto,
         @AuthenticationPrincipal UserDetailsImpl userDetails) {
 
-        return ResponseUtils.updateOk(
-            commentService.updateComment(commentId, updateCommentRequestDto,
-                userDetails.getUser()));
+        commentService.updateComment(commentId, updateCommentRequestDto, userDetails.getUser());
+        return ResponseUtils.updateOk();
     }
 
     @DeleteMapping("/{commentId}")
