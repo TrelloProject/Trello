@@ -9,6 +9,7 @@ import com.sparta.trello.domain.deck.service.DeckService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -35,7 +36,7 @@ public class DeckController {
             ){
 
         deckService.createDeck(boardId, requestDto, user.getUser());
-        return ResponseUtils.createDeckOk();
+        return ResponseUtils.createOk();
     }
 
     /**
@@ -52,7 +53,7 @@ public class DeckController {
             @AuthenticationPrincipal UserDetailsImpl user
             ){
         deckService.updateDeck(deckId, requestDto, user.getUser());
-        return ResponseUtils.updateDeckOk();
+        return ResponseUtils.updateOk();
     }
 
     /**
@@ -85,7 +86,7 @@ public class DeckController {
             @AuthenticationPrincipal UserDetailsImpl user
     ){
         deckService.moveDeck(deckId, requestDto.getPosition(), user.getUser());
-        return ResponseUtils.moveOk();
+        return ResponseUtils.of(HttpStatus.OK, "이동 성공");
     }
 
 }

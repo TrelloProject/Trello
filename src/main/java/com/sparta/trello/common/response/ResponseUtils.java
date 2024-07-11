@@ -48,23 +48,17 @@ public abstract class ResponseUtils {
             ));
     }
 
-    public static ResponseEntity<MessageResponseDto> createDeckOk() {
+    public static ResponseEntity<MessageResponseDto> createOk() {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(new MessageResponseDto(
                         HttpStatus.OK.value(), "생성 성공"
                 ));
     }
 
-    public static ResponseEntity<MessageResponseDto> updateDeckOk() {
+    public static ResponseEntity<MessageResponseDto> updateOk() {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(new MessageResponseDto(
                         HttpStatus.OK.value(), "수정 성공"
-                ));
-    }
-
-    public static ResponseEntity<MessageResponseDto> moveOk() {
-        return ResponseEntity.status(HttpStatus.OK)
-                .body(new MessageResponseDto(HttpStatus.OK.value(), "이동 성공"
                 ));
     }
 }
