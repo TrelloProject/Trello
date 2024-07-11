@@ -8,6 +8,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -33,4 +34,17 @@ public class User extends TimeStampEntity {
 
     @Enumerated(EnumType.STRING)
     private UserAuthRole authRole;
+
+    @Builder
+    public User(String name, String username, String password) {
+        this.name = name;
+        this.username = username;
+        this.password = password;
+        this.userStatus = UserStatus.ACTIVATED;
+        this.authRole = UserAuthRole.ROLE_USER;
+    }
+
+    public void updateRefreshToken(String refreshToken) {
+        this.refreshToken = refreshToken;
+    }
 }
