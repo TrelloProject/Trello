@@ -2,6 +2,9 @@ package com.sparta.trello.domain.comment.repository;
 
 import com.sparta.trello.domain.comment.entity.Comment;
 import com.sparta.trello.domain.user.entity.User;
+import com.sparta.trello.exception.custom.comment.CommentCodeEnum;
+import com.sparta.trello.exception.custom.comment.detail.CommentNoPermissionException;
+import com.sparta.trello.exception.custom.comment.detail.CommentNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -23,12 +26,12 @@ public class CommentAdapter {
 
     public void validateCommentOwnership(Comment comment, User user) {
         if (!comment.getUser().getId().equals(user.getId())) {
-            throw new IllegalArgumentException("사용자는 해당 댓글의 작성자가 아닙니다."); // 커스텀 예외 추가 예정
+            throw new CommentNoPermissionException(CommentCodeEnum.COMMENT_NO_PERMISSION);
         }
     }
 
     public Comment findById(Long commentId) {
         return commentRepository.findById(commentId)
-            .orElseThrow(() -> new IllegalArgumentException("유효하지 않은 댓글 ID입니다.")); // 커스텀 예외 추가 예정
+            .orElseThrow(() -> new CommentNotFoundException(CommentCodeEnum.COMMENT_NOT_FOUND));
     }
 }
