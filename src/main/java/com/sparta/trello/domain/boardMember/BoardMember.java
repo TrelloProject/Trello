@@ -1,4 +1,4 @@
-package com.sparta.trello.domain.boardManager;
+package com.sparta.trello.domain.boardMember;
 
 import com.sparta.trello.common.TimeStampEntity;
 import com.sparta.trello.domain.exam.entity.Board;
@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @Table(name = "boardManger")
-public class BoardManager extends TimeStampEntity {
+public class BoardMember extends TimeStampEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -30,9 +30,10 @@ public class BoardManager extends TimeStampEntity {
     private Board board;
 
     @Builder
-    public BoardManager(BoardRole boardRole, User user, Board board) {
+    public BoardMember(BoardRole boardRole, User user, Board board) {
         this.boardRole = boardRole;
         this.user = user;
         this.board = board;
     }
+
 }

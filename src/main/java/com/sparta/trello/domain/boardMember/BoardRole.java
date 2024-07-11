@@ -1,4 +1,4 @@
-package com.sparta.trello.domain.boardManager;
+package com.sparta.trello.domain.boardMember;
 
 public enum BoardRole {
     MANAGER,
