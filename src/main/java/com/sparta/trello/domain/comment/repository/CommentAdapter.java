@@ -16,8 +16,8 @@ public class CommentAdapter {
 
     private final CommentRepository commentRepository;
 
-    public Comment save(Comment comment) {
-        return commentRepository.save(comment);
+    public void save(Comment comment) {
+        commentRepository.save(comment);
     }
 
     public void delete(Comment comment) {
