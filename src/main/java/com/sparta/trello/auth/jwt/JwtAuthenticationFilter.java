@@ -7,6 +7,7 @@ import com.sparta.trello.domain.user.dto.LoginRequestDto;
 import com.sparta.trello.domain.user.entity.User;
 import com.sparta.trello.domain.user.entity.UserAuthRole;
 import com.sparta.trello.domain.user.repository.UserAdapter;
+import com.sparta.trello.exception.custom.user.detail.UserWithdrawnException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -66,13 +67,8 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         findUser.updateRefreshToken(refreshToken);
         userAdapter.save(findUser);
 
-        MessageResponseDto responseDto = new MessageResponseDto(HttpStatus.OK.value(), "로그인 성공");
-        String body = objectMapper.writeValueAsString(responseDto);
-
         response.addHeader(JwtUtil.ACCESS_TOKEN_HEADER, accessToken);
-        response.setStatus(HttpStatus.OK.value());
-        response.setContentType("application/json;charset=UTF-8");
-        response.getWriter().write(body);
+        sendResponse(response, HttpStatus.OK, "로그인 성공");
     }
 
     @Override
@@ -80,11 +76,19 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         HttpServletRequest request, HttpServletResponse response, AuthenticationException failed
     ) throws IOException, ServletException {
         log.error("로그인 실패");
-        MessageResponseDto responseDto = new MessageResponseDto(HttpStatus.UNAUTHORIZED.value(), "로그인 실패하였습니다.");
+        if (failed.getCause() instanceof UserWithdrawnException e) {
+            sendResponse(response, e.getUserCodeEnum().getHttpStatus(), e.getMessage());
+        } else {
+            sendResponse(response, HttpStatus.UNAUTHORIZED, "로그인 실패하였습니다.");
+        }
+    }
+
+    private void sendResponse(HttpServletResponse response, HttpStatus status, String message) throws IOException {
+        MessageResponseDto responseDto = new MessageResponseDto(status.value(), message);
         String body = objectMapper.writeValueAsString(responseDto);
 
-        response.setStatus(HttpStatus.UNAUTHORIZED.value());
         response.setContentType("application/json;charset=UTF-8");
+        response.setStatus(status.value());
         response.getWriter().write(body);
     }
 }

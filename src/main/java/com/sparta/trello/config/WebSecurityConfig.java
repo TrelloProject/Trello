@@ -64,7 +64,7 @@ public class WebSecurityConfig {
 
     @Bean
     public JwtExceptionFilter jwtExceptionFilter() {
-        return new JwtExceptionFilter();
+        return new JwtExceptionFilter(objectMapper);
     }
 
     @Bean

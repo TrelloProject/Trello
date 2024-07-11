@@ -28,4 +28,9 @@ public class UserService {
             .password(encodedPassword)
             .build());
     }
+
+    public void withdraw(User loginUser) {
+        loginUser.withdrawUser();
+        userAdapter.save(loginUser);
+    }
 }

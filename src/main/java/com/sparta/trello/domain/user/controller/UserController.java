@@ -33,5 +33,13 @@ public class UserController {
         return ResponseUtils.of(HttpStatus.CREATED, "회원가입 성공");
     }
 
+    @DeleteMapping("/withdraw")
+    public ResponseEntity<MessageResponseDto> withdraw(
+        @AuthenticationPrincipal UserDetailsImpl userDetails
+    ) {
+        userService.withdraw(userDetails.getUser());
+        return ResponseUtils.of(HttpStatus.OK, "회원탈퇴 성공");
+    }
+
     // @AuthenticationPrincipal UserDetailsImpl userDetails
 }

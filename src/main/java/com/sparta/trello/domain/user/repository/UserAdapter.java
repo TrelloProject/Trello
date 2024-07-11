@@ -1,9 +1,12 @@
 package com.sparta.trello.domain.user.repository;
 
 import com.sparta.trello.domain.user.entity.User;
+import com.sparta.trello.domain.user.entity.UserStatus;
 import com.sparta.trello.exception.custom.user.UserCodeEnum;
 import com.sparta.trello.exception.custom.user.detail.DuplicatedUsernameUserException;
 import com.sparta.trello.exception.custom.user.detail.UserNotFoundException;
+import com.sparta.trello.exception.custom.user.detail.UserWithdrawnException;
+import java.util.Objects;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -30,5 +33,11 @@ public class UserAdapter {
     public User findByUsername(String username) {
         return userRepository.findByUsername(username)
             .orElseThrow(() -> new UserNotFoundException(UserCodeEnum.NOT_FOUND));
+    }
+
+    public void checkWithdrawn(User findUser) {
+        if (Objects.equals(findUser.getUserStatus(), UserStatus.DEACTIVATED)) {
+            throw new UserWithdrawnException(UserCodeEnum.WITHDRAWN_USER);
+        }
     }
 }

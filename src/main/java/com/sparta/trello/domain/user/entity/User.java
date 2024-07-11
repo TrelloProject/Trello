@@ -51,4 +51,9 @@ public class User extends TimeStampEntity {
     public void removeRefreshToken() {
         this.refreshToken = null;
     }
+
+    public void withdrawUser() {
+        this.userStatus = UserStatus.DEACTIVATED;
+        this.refreshToken = null;
+    }
 }
