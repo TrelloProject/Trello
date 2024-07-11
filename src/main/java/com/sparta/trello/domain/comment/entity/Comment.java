@@ -11,8 +11,10 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
@@ -35,5 +37,13 @@ public class Comment extends TimeStampEntity {
     @JoinColumn(name = "card_id", nullable = false)
     private Card card;
 
+    @Setter
     private String content;
+
+    @Builder
+    public Comment(User user, Card card, String content) {
+        this.user = user;
+        this.card = card;
+        this.content = content;
+    }
 }
