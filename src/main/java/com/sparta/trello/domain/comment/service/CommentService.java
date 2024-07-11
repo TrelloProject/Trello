@@ -1,7 +1,6 @@
 package com.sparta.trello.domain.comment.service;
 
 import com.sparta.trello.domain.card.repository.CardAdapter;
-import com.sparta.trello.domain.comment.dto.CommentResponseDto;
 import com.sparta.trello.domain.comment.dto.CreateCommentRequestDto;
 import com.sparta.trello.domain.comment.dto.UpdateCommentRequestDto;
 import com.sparta.trello.domain.comment.entity.Comment;
@@ -21,7 +20,7 @@ public class CommentService {
     private final CommentAdapter commentAdapter;
 
     @Transactional
-    public CommentResponseDto createComment(CreateCommentRequestDto createCommentRequestDto,
+    public void createComment(CreateCommentRequestDto createCommentRequestDto,
         User user) {
 
         Comment comment = Comment.builder()
@@ -29,19 +28,17 @@ public class CommentService {
             .card(cardAdapter.findById(createCommentRequestDto.getCardId()))
             .content(createCommentRequestDto.getContent())
             .build();
-        Comment savedComment = commentAdapter.save(comment);
-        return new CommentResponseDto(savedComment);
+        commentAdapter.save(comment);
     }
 
     @Transactional
-    public CommentResponseDto updateComment(Long commentId,
+    public void updateComment(Long commentId,
         UpdateCommentRequestDto updateCommentRequestDto, User user) {
 
         Comment comment = commentAdapter.findById(commentId);
         commentAdapter.validateCommentOwnership(comment, user);
         comment.setContent(updateCommentRequestDto.getContent());
-        Comment updatedComment = commentAdapter.save(comment);
-        return new CommentResponseDto(updatedComment);
+        commentAdapter.save(comment);
     }
 
     @Transactional
