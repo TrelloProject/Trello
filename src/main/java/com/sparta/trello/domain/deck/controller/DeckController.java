@@ -29,11 +29,12 @@ public class DeckController {
      */
     @PostMapping("/{boardId}")
     public ResponseEntity<MessageResponseDto> createDeck(
-            @AuthenticationPrincipal UserDetailsImpl user,
             @PathVariable Long boardId,
-            @Valid @RequestBody DeckRequestDto requestDto){
+            @Valid @RequestBody DeckRequestDto requestDto,
+            @AuthenticationPrincipal UserDetailsImpl user
+            ){
 
-        deckService.createDeck(user.getUser(), boardId, requestDto);
+        deckService.createDeck(boardId, requestDto, user.getUser());
         return ResponseUtils.createDeckOk();
     }
 
@@ -47,9 +48,10 @@ public class DeckController {
     @PutMapping("/{deckId}")
     public ResponseEntity<MessageResponseDto> updateDeck(
             @PathVariable Long deckId,
-            @AuthenticationPrincipal UserDetailsImpl user,
-            @Valid @RequestBody DeckRequestDto requestDto){
-        deckService.updateDeck(user.getUser(), deckId, requestDto);
+            @Valid @RequestBody DeckRequestDto requestDto,
+            @AuthenticationPrincipal UserDetailsImpl user
+            ){
+        deckService.updateDeck(deckId, requestDto, user.getUser());
         return ResponseUtils.updateDeckOk();
     }
 
@@ -65,7 +67,7 @@ public class DeckController {
             @AuthenticationPrincipal UserDetailsImpl user
            ){
 
-        deckService.deleteDeck(user.getUser(), deckId);
+        deckService.deleteDeck(deckId, user.getUser());
         return ResponseUtils.deleteOk();
     }
 
@@ -82,7 +84,7 @@ public class DeckController {
             @RequestBody MoveDeckRequestDto requestDto,
             @AuthenticationPrincipal UserDetailsImpl user
     ){
-        deckService.moveDeck(user.getUser(), deckId, requestDto.getPosition());
+        deckService.moveDeck(deckId, requestDto.getPosition(), user.getUser());
         return ResponseUtils.moveOk();
     }
 

@@ -32,7 +32,7 @@ public class DeckService {
      * @param requestDto 생성할 deck 정보
      */
     @Transactional
-    public void createDeck(User user, Long boardId, DeckRequestDto requestDto) {
+    public void createDeck(Long boardId, DeckRequestDto requestDto, User user) {
         //임시코드
         Board board = boardRepository.findById(boardId).orElseThrow(() ->
                 new DeckDetailCustomException(DeckCodeEnum.DECK_NOT_FOUND));
@@ -70,7 +70,7 @@ public class DeckService {
      * @param requestDto 수정할 deck 정보
      */
     @Transactional
-    public void updateDeck(User user, Long deckId, DeckRequestDto requestDto){
+    public void updateDeck(Long deckId, DeckRequestDto requestDto, User user){
         Deck deck = deckAdapter.findById(deckId);
         deck.updateTitle(requestDto.getTitle());
     }
@@ -81,7 +81,7 @@ public class DeckService {
      * @param deckId 삭제할 deck id
      */
     @Transactional
-    public void deleteDeck(User user, Long deckId){
+    public void deleteDeck(Long deckId, User user){
         Deck currentDeck = deckAdapter.findById(deckId);
         Board board = currentDeck.getBoard();
         List<Deck> deckList = deckAdapter.findByBoard(board);
@@ -97,7 +97,7 @@ public class DeckService {
      * @param index 이동할 position 위치
      */
     @Transactional
-    public void moveDeck(User user, Long deckId, Long index){
+    public void moveDeck(Long deckId, Long index, User user){
         Deck currentDeck = deckAdapter.findById(deckId);
         Board board = currentDeck.getBoard();
         List<Deck> deckList = deckAdapter.findByBoard(board);
