@@ -99,7 +99,7 @@ public class JwtUtil {
             request.setAttribute("jwtException", JwtCodeEnum.UNSUPPORTED_JWT_TOKEN);
         } catch (IllegalArgumentException e) {
             log.error("JWT claims is empty, 잘못된 JWT 토큰 입니다.");
-            request.setAttribute("jwtException", JwtCodeEnum.JWT_CLAIMS_IS_EMPTY);
+            request.setAttribute("jwtException", JwtCodeEnum.EMPTY_JWT_CLAIMS);
         }
         return false;
     }

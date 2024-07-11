@@ -2,7 +2,7 @@ package com.sparta.trello.domain.user.controller;
 
 import com.sparta.trello.common.response.MessageResponseDto;
 import com.sparta.trello.common.response.ResponseUtils;
-import com.sparta.trello.domain.user.dto.UserSignupRequestDto;
+import com.sparta.trello.domain.user.dto.SignupRequestDto;
 import com.sparta.trello.domain.user.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -26,7 +26,7 @@ public class UserController {
 
     @PostMapping("/signup")
     public ResponseEntity<MessageResponseDto> signup(
-        @Valid @RequestBody UserSignupRequestDto requestDto
+        @Valid @RequestBody SignupRequestDto requestDto
     ) {
         userService.signup(requestDto);
         return ResponseUtils.of(HttpStatus.CREATED, "회원가입 성공");

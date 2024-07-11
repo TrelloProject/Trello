@@ -1,6 +1,6 @@
 package com.sparta.trello.domain.user.service;
 
-import com.sparta.trello.domain.user.dto.UserSignupRequestDto;
+import com.sparta.trello.domain.user.dto.SignupRequestDto;
 import com.sparta.trello.domain.user.entity.User;
 import com.sparta.trello.domain.user.repository.UserAdapter;
 import lombok.RequiredArgsConstructor;
@@ -18,7 +18,7 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
 
     @Transactional
-    public void signup(UserSignupRequestDto requestDto) {
+    public void signup(SignupRequestDto requestDto) {
         userAdapter.validUserSignup(requestDto.getUsername());
 
         String encodedPassword = passwordEncoder.encode(requestDto.getPassword());
