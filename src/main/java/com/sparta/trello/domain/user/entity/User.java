@@ -47,4 +47,8 @@ public class User extends TimeStampEntity {
     public void updateRefreshToken(String refreshToken) {
         this.refreshToken = refreshToken;
     }
+
+    public void removeRefreshToken() {
+        this.refreshToken = null;
+    }
 }

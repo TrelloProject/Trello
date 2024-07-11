@@ -7,7 +7,6 @@ import com.sparta.trello.domain.user.dto.LoginRequestDto;
 import com.sparta.trello.domain.user.entity.User;
 import com.sparta.trello.domain.user.entity.UserAuthRole;
 import com.sparta.trello.domain.user.repository.UserAdapter;
-import com.sparta.trello.domain.user.repository.UserRepository;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

@@ -2,9 +2,11 @@ package com.sparta.trello.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sparta.trello.auth.UserDetailsServiceImpl;
-import com.sparta.trello.auth.jwt.JwtAuthenticationEntryPoint;
 import com.sparta.trello.auth.jwt.JwtAuthenticationFilter;
 import com.sparta.trello.auth.jwt.JwtAuthorizationFilter;
+import com.sparta.trello.auth.jwt.JwtExceptionFilter;
+import com.sparta.trello.auth.jwt.JwtLogoutHandler;
+import com.sparta.trello.auth.jwt.JwtLogoutSuccessHandler;
 import com.sparta.trello.auth.jwt.JwtUtil;
 import com.sparta.trello.domain.user.repository.UserAdapter;
 import lombok.RequiredArgsConstructor;
@@ -21,9 +23,11 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.authentication.logout.LogoutFilter;
 
 @Configuration
 @EnableWebSecurity
+//@EnableWebSecurity(debug = true)
 @RequiredArgsConstructor
 public class WebSecurityConfig {
 
@@ -32,7 +36,8 @@ public class WebSecurityConfig {
     private final AuthenticationConfiguration authenticationConfiguration;
     private final ObjectMapper objectMapper;
     private final UserAdapter userAdapter;
-    private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
+    private final JwtLogoutHandler jwtLogoutHandler;
+    private final JwtLogoutSuccessHandler jwtLogoutSuccessHandler;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -47,8 +52,7 @@ public class WebSecurityConfig {
 
     @Bean
     public JwtAuthenticationFilter jwtAuthenticationFilter() throws Exception {
-        JwtAuthenticationFilter filter = new JwtAuthenticationFilter(jwtUtil, objectMapper,
-            userAdapter);
+        JwtAuthenticationFilter filter = new JwtAuthenticationFilter(jwtUtil, objectMapper, userAdapter);
         filter.setAuthenticationManager(authenticationManager(authenticationConfiguration));
         return filter;
     }
@@ -56,6 +60,11 @@ public class WebSecurityConfig {
     @Bean
     public JwtAuthorizationFilter jwtAuthorizationFilter() {
         return new JwtAuthorizationFilter(jwtUtil, userDetailsService, userAdapter);
+    }
+
+    @Bean
+    public JwtExceptionFilter jwtExceptionFilter() {
+        return new JwtExceptionFilter();
     }
 
     @Bean
@@ -70,18 +79,22 @@ public class WebSecurityConfig {
 
         http.authorizeHttpRequests((authorizeHttpRequests) ->
             authorizeHttpRequests
-                .requestMatchers(PathRequest.toStaticResources().atCommonLocations()) .permitAll() // resources 접근 허용 설정
+                .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll() // resources 접근 허용 설정
                 .requestMatchers("/").permitAll()
-                .requestMatchers("/users/**").permitAll()
+                .requestMatchers("/users/login", "/users/signup").permitAll()
                 .anyRequest().authenticated() // 그 외 모든 요청 인증처리
         );
 
         // 필터 관리
         http.addFilterBefore(jwtAuthorizationFilter(), JwtAuthenticationFilter.class);
+        http.addFilterBefore(jwtExceptionFilter(), LogoutFilter.class);
         http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
 
-        http.exceptionHandling(
-            exception -> exception.authenticationEntryPoint(jwtAuthenticationEntryPoint)
+        http.logout(logout ->
+            logout.logoutUrl("/users/logout")
+//                .logoutSuccessUrl("") 로그아웃 성공했을 때 로그인 화면으로 이동
+                .addLogoutHandler(jwtLogoutHandler)
+                .logoutSuccessHandler(jwtLogoutSuccessHandler)
         );
 
         return http.build();
