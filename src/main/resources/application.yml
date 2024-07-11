@@ -12,7 +12,7 @@ spring:
   sql:
     init:
       encoding: UTF-8
-#      mode: always
+      mode: always
 
   jpa:
     hibernate:
@@ -25,7 +25,7 @@ spring:
           CharSet: utf-8
           characterEncoding: utf-8
           useUnicode: true
-#    defer-datasource-initialization: true
+    defer-datasource-initialization: true
 
 logging.level:
   root: info
