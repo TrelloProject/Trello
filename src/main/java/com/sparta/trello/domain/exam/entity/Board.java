@@ -2,6 +2,7 @@ package com.sparta.trello.domain.exam.entity;
 
 import com.sparta.trello.common.TimeStampEntity;
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -22,4 +23,15 @@ public class Board extends TimeStampEntity {
 
     @Column
     private String description;
+
+    @Builder
+    public Board(String title,String description) {
+        this.title = title;
+        this.description = description;
+    }
+    //수정용
+    public void update(String title,String description) {
+        this.title = title;
+        this.description = description;
+    }
 }
