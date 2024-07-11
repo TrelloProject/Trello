@@ -7,12 +7,14 @@ import com.sparta.trello.domain.deck.Entity.Deck;
 import com.sparta.trello.domain.deck.Entity.QDeck;
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
 @Repository
 @RequiredArgsConstructor
+@Slf4j(topic = "deck 쿼리 dsl")
 public class DeckRepositoryImpl implements DeckQueryRepository{
 //    private final EntityManager em;
 //    private final JPAQueryFactory query;
@@ -22,7 +24,6 @@ public class DeckRepositoryImpl implements DeckQueryRepository{
     public Long findByCountBoardIdDeck(Board board) {
 
         QDeck deck = QDeck.deck;
-
         JPAQuery<Long> query = jpaQueryFactory.select(deck.count())
                 .from(deck)
                 .where(deck.board.eq(board));

@@ -8,13 +8,16 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
+import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Component
 @RequiredArgsConstructor
 public class DeckAdapter {
-    private DeckRepository deckRepository;
+    private final DeckRepository deckRepository;
 
     public Deck findById(Long deckId){
         return deckRepository.findById(deckId).orElseThrow(() ->
@@ -46,13 +49,20 @@ public class DeckAdapter {
         deckRepository.delete(deck);
     }
 
-    public Deck findPreviousDeck(List<Deck> deckList, Deck currentDeck) {
-        for (Deck deck : deckList) {
-            if (deck.getNextId().equals(currentDeck.getId())) {
-                return deck;
+    public Deck findDeckAtIndex(List<Deck> deckList, Long index, Long headDeckId) {
+        Long currentId = headDeckId;
+        Deck currentDeck = null;
+
+        for (int i = 0; i <= index; i++) {
+            Long finalCurrentId = currentId;
+            currentDeck = deckList.stream().filter(deck -> deck.getId().equals(finalCurrentId)).findFirst().orElse(null);
+            if (currentDeck == null) {
+                break;
             }
+            currentId = currentDeck.getNextId();
         }
-        return null;
+
+        return currentDeck;
     }
 
     public void updateNextId(Deck currentDeck, Board board, List<Deck> deckList){
@@ -62,8 +72,17 @@ public class DeckAdapter {
             prevDeck.updateNextId(currentDeck.getNextId());
         } else {
             // currentDeck이 헤드 덱인 경우
-            //board.setHeadDeckId(currentDeck.getNextId());
+            board.updateHeadDeckId(currentDeck.getNextId());
         }
+    }
+
+    private Deck findPreviousDeck(List<Deck> deckList, Deck currentDeck) {
+        for (Deck deck : deckList) {
+            if (deck.getNextId() != null && deck.getNextId().equals(currentDeck.getId())) {
+                return deck;
+            }
+        }
+        return null;
     }
 
 }
