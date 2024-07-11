@@ -15,6 +15,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 @Getter
 @NoArgsConstructor
@@ -30,6 +32,7 @@ public class Comment extends TimeStampEntity {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
+    @OnDelete(action = OnDeleteAction.CASCADE) //삭제를 테스트 위해 임시로 적어둠
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "card_id", nullable = false)
     private Card card;

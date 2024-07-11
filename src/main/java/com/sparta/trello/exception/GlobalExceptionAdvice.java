@@ -1,5 +1,7 @@
 package com.sparta.trello.exception;
 
+import com.sparta.trello.exception.custom.deck.DeckException;
+import com.sparta.trello.exception.custom.exam.ExamException;
 import com.sparta.trello.common.response.DataResponseDto;
 import com.sparta.trello.common.response.MessageResponseDto;
 import com.sparta.trello.common.response.ResponseUtils;
@@ -36,6 +38,11 @@ public class GlobalExceptionAdvice {
     public ResponseEntity<MessageResponseDto> handleUserException(UserException e) {
         log.error("예시 에러: ", e);
         return ResponseUtils.of(e.getUserCodeEnum().getHttpStatus(), e.getMessage());
+    }
+
+    @ExceptionHandler(DeckException.class)
+    public ResponseEntity<MessageResponseDto> handleUserException(DeckException e) {
+        return ResponseUtils.of(e.getDeckCodeEnum().getHttpStatus(), e.getMessage());
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)

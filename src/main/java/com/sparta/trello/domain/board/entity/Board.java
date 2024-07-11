@@ -9,6 +9,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Getter
@@ -28,4 +29,8 @@ public class Board extends TimeStampEntity {
 
     @Column
     private String description;
+
+    public void updateHeadDeckId(Long headDeckId){
+        this.headDeckId = headDeckId;
+    }
 }
