@@ -1,5 +1,6 @@
 package com.sparta.trello.domain.exam.controller;
 
+import com.sparta.trello.auth.UserDetailsImpl;
 import com.sparta.trello.common.response.DataResponseDto;
 import com.sparta.trello.common.response.MessageResponseDto;
 import com.sparta.trello.common.response.ResponseUtils;
@@ -8,9 +9,12 @@ import com.sparta.trello.domain.exam.dto.ExamResponseDto;
 import com.sparta.trello.domain.exam.dto.ExamUpdateRequestDto;
 import com.sparta.trello.domain.exam.service.ExamService;
 import jakarta.validation.Valid;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @Slf4j
@@ -19,6 +23,13 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/exam")
 public class ExamController {
     private final ExamService examService;
+
+    @GetMapping
+    public ResponseEntity<MessageResponseDto> exam(
+        @AuthenticationPrincipal UserDetailsImpl userDetails
+    ) {
+        return ResponseUtils.of(HttpStatus.OK, userDetails.getUser().getUsername());
+    }
 
     // Exam 생성
     @PostMapping

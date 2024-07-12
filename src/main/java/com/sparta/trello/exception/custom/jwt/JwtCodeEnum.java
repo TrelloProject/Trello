@@ -1,4 +1,4 @@
-package com.sparta.trello.auth.jwt;
+package com.sparta.trello.exception.custom.jwt;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

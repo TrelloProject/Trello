@@ -41,4 +41,7 @@ public class BoardMember extends TimeStampEntity {
         this.board = board;
     }
 
+    public void grantBoardManager() {
+        this.boardRole = BoardRole.MANAGER;
+    }
 }
