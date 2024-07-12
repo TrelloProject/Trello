@@ -1,34 +1,33 @@
-package com.sparta.trello.domain.deck.entity;
+package com.sparta.trello.domain.boardMember.entity;
 
 import com.sparta.trello.common.TimeStampEntity;
 import com.sparta.trello.domain.board.entity.Board;
+import com.sparta.trello.domain.user.entity.User;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
 @Entity
 @Getter
 @NoArgsConstructor
-@Table(name = "deck")
-public class Deck extends TimeStampEntity {
+@Table(name = "board_member")
+public class BoardMember extends TimeStampEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(nullable = false)
-    private String title;
+    @Enumerated(EnumType.STRING)
+    private BoardRole boardRole;
 
-    @Column
-    private Long nextId;
-
-    @Setter
-    @Column
-    private Long headCardId;
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
     @OnDelete(action = OnDeleteAction.CASCADE)
     @ManyToOne(fetch = FetchType.LAZY)
@@ -36,17 +35,10 @@ public class Deck extends TimeStampEntity {
     private Board board;
 
     @Builder
-    public Deck(String title, Long nextId, Board board){
-        this.title = title;
-        this.nextId = nextId;
+    public BoardMember(BoardRole boardRole, User user, Board board) {
+        this.boardRole = boardRole;
+        this.user = user;
         this.board = board;
     }
 
-    public void updateTitle(String title){
-        this.title = title;
-    }
-
-    public void updateNextId(Long nextId){
-        this.nextId = nextId;
-    }
 }

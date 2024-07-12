@@ -1,14 +1,13 @@
 package com.sparta.trello.domain.deck.service;
 
 import com.sparta.trello.domain.board.entity.Board;
-import com.sparta.trello.domain.board.repository.BoardRepository;
-import com.sparta.trello.domain.deck.entity.Deck;
+import com.sparta.trello.domain.board.repository.BoardAdapter;
+import com.sparta.trello.domain.boardMember.entity.BoardMember;
+import com.sparta.trello.domain.boardMember.repository.BoardMemberAdapter;
 import com.sparta.trello.domain.deck.dto.DeckRequestDto;
+import com.sparta.trello.domain.deck.entity.Deck;
 import com.sparta.trello.domain.deck.repository.DeckAdapter;
 import com.sparta.trello.domain.user.entity.User;
-import com.sparta.trello.domain.user.repository.UserAdapter;
-import com.sparta.trello.exception.custom.deck.detail.DeckCodeEnum;
-import com.sparta.trello.exception.custom.deck.detail.DeckDetailCustomException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -22,8 +21,8 @@ import java.util.List;
 public class DeckService {
 
     private final DeckAdapter deckAdapter;
-    private final UserAdapter userAdapter;
-    private final BoardRepository boardRepository;
+    private final BoardAdapter boardAdapter;
+    private final BoardMemberAdapter boardMemberAdapter;
 
     /**
      * deck 생성
@@ -33,9 +32,10 @@ public class DeckService {
      */
     @Transactional
     public void createDeck(Long boardId, DeckRequestDto requestDto, User user) {
-        //임시코드
-        Board board = boardRepository.findById(boardId).orElseThrow(() ->
-                new DeckDetailCustomException(DeckCodeEnum.DECK_NOT_FOUND));
+        Board board = boardAdapter.findById(boardId);
+
+        BoardMember boardMember = boardMemberAdapter.findByBoardAndUser(board, user);
+        boardMemberAdapter.validateBoardMember(boardMember);
 
         Long deckCount = deckAdapter.findByCountBoardIdDeck(board);
 
@@ -59,7 +59,6 @@ public class DeckService {
                     .build();
             deck = deckAdapter.save(deck);
             prevDeck.updateNextId(deck.getId());
-
         }
     }
 
@@ -72,6 +71,10 @@ public class DeckService {
     @Transactional
     public void updateDeck(Long deckId, DeckRequestDto requestDto, User user){
         Deck deck = deckAdapter.findById(deckId);
+        BoardMember boardMember = boardMemberAdapter.findByBoardAndUser(deck.getBoard(), user);
+
+        boardMemberAdapter.validateBoardMember(boardMember);
+
         deck.updateTitle(requestDto.getTitle());
     }
 
@@ -82,8 +85,9 @@ public class DeckService {
      */
     @Transactional
     public void deleteDeck(Long deckId, User user){
-        Deck currentDeck = deckAdapter.findById(deckId);
+        Deck currentDeck = getDeckAndValidateUser(deckId, user);
         Board board = currentDeck.getBoard();
+
         List<Deck> deckList = deckAdapter.findByBoard(board);
 
         deckAdapter.updateNextId(currentDeck, board, deckList);
@@ -98,8 +102,9 @@ public class DeckService {
      */
     @Transactional
     public void moveDeck(Long deckId, Long index, User user){
-        Deck currentDeck = deckAdapter.findById(deckId);
+        Deck currentDeck = getDeckAndValidateUser(deckId, user);
         Board board = currentDeck.getBoard();
+
         List<Deck> deckList = deckAdapter.findByBoard(board);
 
         deckAdapter.updateNextId(currentDeck, board, deckList);
@@ -116,4 +121,21 @@ public class DeckService {
         }
 
     }
+
+    /**
+     * 보드 권한 검증
+     * @param deckId 검증이 필요한 deck id
+     * @param user 로그인 유저
+     * @return 검증된 deck 반환
+     */
+    private Deck getDeckAndValidateUser(Long deckId, User user) {
+        Deck currentDeck = deckAdapter.findById(deckId);
+        Board board = currentDeck.getBoard();
+
+        BoardMember boardMember = boardMemberAdapter.findByBoardAndUser(board, user);
+        boardMemberAdapter.validateBoardMember(boardMember);
+
+        return currentDeck;
+    }
+
 }
