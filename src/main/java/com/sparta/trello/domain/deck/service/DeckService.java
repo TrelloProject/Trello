@@ -2,11 +2,10 @@ package com.sparta.trello.domain.deck.service;
 
 import com.sparta.trello.domain.board.entity.Board;
 import com.sparta.trello.domain.board.repository.BoardRepository;
-import com.sparta.trello.domain.deck.entity.Deck;
 import com.sparta.trello.domain.deck.dto.DeckRequestDto;
+import com.sparta.trello.domain.deck.entity.Deck;
 import com.sparta.trello.domain.deck.repository.DeckAdapter;
 import com.sparta.trello.domain.user.entity.User;
-import com.sparta.trello.domain.user.repository.UserAdapter;
 import com.sparta.trello.exception.custom.deck.detail.DeckCodeEnum;
 import com.sparta.trello.exception.custom.deck.detail.DeckDetailCustomException;
 import lombok.RequiredArgsConstructor;
@@ -22,7 +21,6 @@ import java.util.List;
 public class DeckService {
 
     private final DeckAdapter deckAdapter;
-    private final UserAdapter userAdapter;
     private final BoardRepository boardRepository;
 
     /**
