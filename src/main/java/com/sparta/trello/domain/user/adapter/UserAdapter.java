@@ -1,7 +1,8 @@
-package com.sparta.trello.domain.user.repository;
+package com.sparta.trello.domain.user.adapter;
 
 import com.sparta.trello.domain.user.entity.User;
 import com.sparta.trello.domain.user.entity.UserStatus;
+import com.sparta.trello.domain.user.repository.UserRepository;
 import com.sparta.trello.exception.custom.user.UserCodeEnum;
 import com.sparta.trello.exception.custom.user.detail.DuplicatedUsernameUserException;
 import com.sparta.trello.exception.custom.user.detail.UserNotFoundException;

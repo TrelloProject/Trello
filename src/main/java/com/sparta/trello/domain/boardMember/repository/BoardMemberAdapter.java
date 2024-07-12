@@ -21,7 +21,7 @@ public class BoardMemberAdapter {
     public BoardMember save(BoardMember boardMember){
         return boardMemberRepository.save(boardMember);
     }
-    
+
     public BoardMember findByBoardAndUser(Board board, User user){
         return boardMemberRepository.findByBoardAndUser(board, user)
                 .orElseThrow(()-> new BoardMemberDetailCustomException(BoardMemberCodeEnum.BOARD_MEMBER_FORBIDDEN));
@@ -30,6 +30,10 @@ public class BoardMemberAdapter {
     public BoardMember validateUserMember(Board board, User user){
         return boardMemberRepository.findByBoardAndUser(board, user).orElse(null);
 
+    }
+
+    public List<BoardMember> findByTwoBoardMember(List<Long> boardId) {
+        return boardMemberRepository.findByTwoBoardMember(boardId);
     }
     
     public List<BoardMember> findByUser(User user){

@@ -1,7 +1,7 @@
 package com.sparta.trello.auth.jwt;
 
 import com.sparta.trello.domain.user.entity.User;
-import com.sparta.trello.domain.user.repository.UserAdapter;
+import com.sparta.trello.domain.user.adapter.UserAdapter;
 import com.sparta.trello.exception.custom.jwt.JwtCodeEnum;
 import com.sparta.trello.exception.custom.jwt.JwtException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -23,16 +23,17 @@ public class JwtLogoutHandler implements LogoutHandler {
 
     @Override
     public void logout(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
+        log.info("로그아웃 시작");
         String accessToken = jwtUtil.getAccessTokenFromHeader(request);
         if (accessToken == null) {
-            throw new JwtException(JwtCodeEnum.ALREADY_LOGOUT);
+            throw new JwtException(JwtCodeEnum.JWT_NOT_FOUND);
         }
 
         String username = jwtUtil.getUserInfoFromToken(accessToken).getSubject();
         User finduser = userAdapter.findByUsername(username);
 
         if (finduser.getRefreshToken() == null) {
-            throw new JwtException(JwtCodeEnum.ALREADY_LOGOUT);
+            throw new JwtException(JwtCodeEnum.JWT_NOT_FOUND);
         }
         finduser.removeRefreshToken();
         userAdapter.save(finduser);

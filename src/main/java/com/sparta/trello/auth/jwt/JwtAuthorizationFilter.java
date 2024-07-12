@@ -1,14 +1,16 @@
 package com.sparta.trello.auth.jwt;
 
 import com.sparta.trello.auth.UserDetailsServiceImpl;
+import com.sparta.trello.domain.user.adapter.UserAdapter;
 import com.sparta.trello.domain.user.entity.User;
-import com.sparta.trello.domain.user.repository.UserAdapter;
 import com.sparta.trello.exception.custom.jwt.JwtCodeEnum;
 import com.sparta.trello.exception.custom.jwt.detail.JwtAlreadyRemoveException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpMethod;
@@ -19,9 +21,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
-
-import java.io.IOException;
-import java.util.List;
 
 @Slf4j
 @RequiredArgsConstructor

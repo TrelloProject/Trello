@@ -3,6 +3,7 @@ package com.sparta.trello.domain.user.controller;
 import com.sparta.trello.auth.UserDetailsImpl;
 import com.sparta.trello.common.response.MessageResponseDto;
 import com.sparta.trello.common.response.ResponseUtils;
+import com.sparta.trello.domain.user.dto.GrantBoardRoleDto;
 import com.sparta.trello.domain.user.dto.SignupRequestDto;
 import com.sparta.trello.domain.user.service.UserService;
 import jakarta.validation.Valid;
@@ -14,6 +15,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -41,5 +43,12 @@ public class UserController {
         return ResponseUtils.of(HttpStatus.OK, "회원탈퇴 성공");
     }
 
-    // @AuthenticationPrincipal UserDetailsImpl userDetails
+    @PutMapping("/role")
+    public ResponseEntity<MessageResponseDto> grantRole(
+        @AuthenticationPrincipal UserDetailsImpl userDetails,
+        @Valid @RequestBody GrantBoardRoleDto grantBoardRoleDto
+    ) {
+        userService.grantRole(userDetails.getUser(), grantBoardRoleDto);
+        return ResponseUtils.of(HttpStatus.OK, "권한 부여 성공");
+    }
 }

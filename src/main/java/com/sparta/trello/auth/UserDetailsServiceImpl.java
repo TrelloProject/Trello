@@ -1,7 +1,7 @@
 package com.sparta.trello.auth;
 
+import com.sparta.trello.domain.user.adapter.UserAdapter;
 import com.sparta.trello.domain.user.entity.User;
-import com.sparta.trello.domain.user.repository.UserAdapter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

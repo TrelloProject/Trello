@@ -8,7 +8,7 @@ import com.sparta.trello.auth.jwt.JwtExceptionFilter;
 import com.sparta.trello.auth.jwt.JwtLogoutHandler;
 import com.sparta.trello.auth.jwt.JwtLogoutSuccessHandler;
 import com.sparta.trello.auth.jwt.JwtUtil;
-import com.sparta.trello.domain.user.repository.UserAdapter;
+import com.sparta.trello.domain.user.adapter.UserAdapter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
