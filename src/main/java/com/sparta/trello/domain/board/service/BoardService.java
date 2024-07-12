@@ -48,7 +48,7 @@ public class BoardService {
     public void deleteBoard(Long boardId, User user) {
         Board board = boardAdapter.findById(boardId);
         BoardMember member = boardMemberAdapter.findByBoardAndUser(board, user);
-        boardAdapter.validateBoardMember(member);
+        boardMemberAdapter.validateBoardMember(member);
         boardAdapter.delete(board);
     }
 
@@ -66,7 +66,7 @@ public class BoardService {
     public BoardResponseDto updateBoard(Long boardId, UpdateBoardRequest request, User user) {
         Board board = boardAdapter.findById(boardId);
         BoardMember member = boardMemberAdapter.findByBoardAndUser(board, user);
-        boardAdapter.validateBoardMember(member);
+        boardMemberAdapter.validateBoardMember(member);
         board.update(request.getTitle(), request.getDescription());
 
         return new BoardResponseDto(board);
@@ -77,7 +77,7 @@ public class BoardService {
         Board board = boardAdapter.findById(boardId);
         BoardMember member = boardMemberAdapter.findByBoardAndUser(board, user);
 
-        boardAdapter.validateBoardMember(member);
+        boardMemberAdapter.validateBoardMember(member);
 
         User inviteUser = userAdapter.findByUsername(requestDto.getUsername());
         BoardMember findUserMember = boardMemberAdapter.findByBoardAndUser(board, inviteUser);
