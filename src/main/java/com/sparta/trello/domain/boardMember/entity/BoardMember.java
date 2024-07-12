@@ -1,7 +1,7 @@
-package com.sparta.trello.domain.boardMember;
+package com.sparta.trello.domain.boardMember.entity;
 
 import com.sparta.trello.common.TimeStampEntity;
-import com.sparta.trello.domain.exam.entity.Board;
+import com.sparta.trello.domain.board.entity.Board;
 import com.sparta.trello.domain.user.entity.User;
 import jakarta.persistence.*;
 import lombok.Builder;
@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor
-@Table(name = "boardManger")
+@Table(name = "board_member")
 public class BoardMember extends TimeStampEntity {
 
     @Id
