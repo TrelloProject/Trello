@@ -7,18 +7,18 @@ import com.sparta.trello.domain.user.dto.LoginRequestDto;
 import com.sparta.trello.domain.user.entity.User;
 import com.sparta.trello.domain.user.entity.UserAuthRole;
 import com.sparta.trello.domain.user.repository.UserAdapter;
-import com.sparta.trello.exception.custom.user.detail.UserWithdrawnException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.io.IOException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
+import java.io.IOException;
 
 @Slf4j
 public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
