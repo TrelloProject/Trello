@@ -1,15 +1,15 @@
-package com.sparta.trello.boardall.boarddto.boardResponse;
+package com.sparta.trello.domain.board.dto;
 
-import com.sparta.trello.domain.exam.entity.Board;
+import com.sparta.trello.domain.board.entity.Board;
 import lombok.Getter;
 
 @Getter
-public class BoardResponse {
+public class BoardResponseDto {
 
     private final String title;
     private final String description;
 
-    public BoardResponse(Board board) {
+    public BoardResponseDto(Board board) {
         this.title = board.getTitle();
         this.description = board.getDescription();
     }

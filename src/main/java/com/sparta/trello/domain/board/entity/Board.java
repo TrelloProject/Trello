@@ -1,15 +1,10 @@
 package com.sparta.trello.domain.board.entity;
 
 import com.sparta.trello.common.TimeStampEntity;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Entity
 @Getter
@@ -32,5 +27,15 @@ public class Board extends TimeStampEntity {
 
     public void updateHeadDeckId(Long headDeckId){
         this.headDeckId = headDeckId;
+    }
+    @Builder
+    public Board(String title,String description) {
+        this.title = title;
+        this.description = description;
+    }
+    //수정용
+    public void update(String title,String description) {
+        this.title = title;
+        this.description = description;
     }
 }

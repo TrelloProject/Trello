@@ -3,8 +3,9 @@ package com.sparta.trello.domain.comment.dto;
 import com.sparta.trello.domain.card.entity.Card;
 import com.sparta.trello.domain.comment.entity.Comment;
 import com.sparta.trello.domain.user.entity.User;
-import java.time.LocalDateTime;
 import lombok.Getter;
+
+import java.time.LocalDateTime;
 
 @Getter
 public class CommentResponseDto {
