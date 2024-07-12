@@ -14,6 +14,7 @@ import com.sparta.trello.domain.user.repository.UserAdapter;
 import com.sparta.trello.exception.custom.boardMember.detail.BoardMemberCodeEnum;
 import com.sparta.trello.exception.custom.boardMember.detail.BoardMemberDetailCustomException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,6 +23,7 @@ import java.util.List;
 
 @RequiredArgsConstructor
 @Service
+@Slf4j
 public class BoardService {
 
     private final BoardAdapter boardAdapter;
@@ -39,9 +41,10 @@ public class BoardService {
                 .boardRole(BoardRole.MANAGER)
                 .user(user)
                 .board(board).build();
+        board = boardAdapter.save(board);
         boardMemberAdapter.save(boardMember);
 
-        return new BoardResponseDto(boardAdapter.save(board));
+        return new BoardResponseDto(board);
     }
 
     @Transactional
@@ -52,7 +55,7 @@ public class BoardService {
         boardAdapter.delete(board);
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public List<BoardResponseDto> getAllBoards(User user) {
         List<BoardMember> boardMember = boardMemberAdapter.findByUser(user);
         List<Board> boards = new ArrayList<>();
@@ -76,11 +79,10 @@ public class BoardService {
     public void inviteUser(InviteBoardRequestDto requestDto, Long boardId, User user) {
         Board board = boardAdapter.findById(boardId);
         BoardMember member = boardMemberAdapter.findByBoardAndUser(board, user);
-
         boardMemberAdapter.validateBoardMember(member);
 
         User inviteUser = userAdapter.findByUsername(requestDto.getUsername());
-        BoardMember findUserMember = boardMemberAdapter.findByBoardAndUser(board, inviteUser);
+        BoardMember findUserMember = boardMemberAdapter.validateUserMember(board, inviteUser);
         if(findUserMember != null) {
             throw new BoardMemberDetailCustomException(BoardMemberCodeEnum.BOARD_MEMBER_NOT_FOUND);
         }

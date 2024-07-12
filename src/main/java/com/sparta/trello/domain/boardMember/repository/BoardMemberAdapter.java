@@ -26,6 +26,11 @@ public class BoardMemberAdapter {
         return boardMemberRepository.findByBoardAndUser(board, user)
                 .orElseThrow(()-> new BoardMemberDetailCustomException(BoardMemberCodeEnum.BOARD_MEMBER_FORBIDDEN));
     }
+
+    public BoardMember validateUserMember(Board board, User user){
+        return boardMemberRepository.findByBoardAndUser(board, user).orElse(null);
+
+    }
     
     public List<BoardMember> findByUser(User user){
         return boardMemberRepository.findByUser(user);
@@ -35,7 +40,7 @@ public class BoardMemberAdapter {
         if(member == null){
             throw new BoardMemberDetailCustomException(BoardMemberCodeEnum.BOARD_MEMBER_NOT_FOUND);
         }
-        if(member.getBoardRole() != BoardRole.MANAGER) {
+        if(!member.getBoardRole().equals(BoardRole.MANAGER)) {
             throw new BoardMemberDetailCustomException(BoardMemberCodeEnum.BOARD_MEMBER_FORBIDDEN);
         }
     }
