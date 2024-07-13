@@ -5,10 +5,13 @@ import com.sparta.trello.common.response.MessageResponseDto;
 import com.sparta.trello.common.response.ResponseUtils;
 import com.sparta.trello.exception.custom.board.BoardException;
 import com.sparta.trello.exception.custom.boardMember.BoardMemberException;
+import com.sparta.trello.exception.custom.card.CardException;
 import com.sparta.trello.exception.custom.comment.CommentException;
 import com.sparta.trello.exception.custom.deck.DeckException;
 import com.sparta.trello.exception.custom.exam.ExamException;
 import com.sparta.trello.exception.custom.user.UserException;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,12 +19,15 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @Slf4j
 @RestControllerAdvice
 public class GlobalExceptionAdvice {
+
+    @ExceptionHandler(CardException.class)
+    public ResponseEntity<MessageResponseDto> handleCardException(CardException e) {
+        log.error("에러 발생: ", e);
+        return ResponseUtils.of(e.getCardCodeEnum().getHttpStatus(), e.getMessage());
+    }
 
     @ExceptionHandler(CommentException.class)
     public ResponseEntity<MessageResponseDto> handleCommentException(CommentException e) {
