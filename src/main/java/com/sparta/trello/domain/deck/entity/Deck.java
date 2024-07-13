@@ -12,7 +12,9 @@ import org.hibernate.annotations.OnDeleteAction;
 @Entity
 @Getter
 @NoArgsConstructor
-@Table(name = "deck")
+@Table(name = "deck", indexes = {
+        @Index(name = "idx_deck_next_id", columnList = "next_id")
+})
 public class Deck extends TimeStampEntity {
 
     @Id
