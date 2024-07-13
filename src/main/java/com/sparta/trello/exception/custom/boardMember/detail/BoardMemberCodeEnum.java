@@ -9,7 +9,7 @@ import org.springframework.http.HttpStatus;
 public enum BoardMemberCodeEnum {
     BOARD_MEMBER_NOT_FOUND(HttpStatus.NOT_FOUND, "보드맴버가 존재하지 않습니다."),
     BOARD_MEMBER_FORBIDDEN(HttpStatus.FORBIDDEN, "보드의 권한이 없습니다."),
-
+    CANNOT_GRANT_PERMISSION_TO_SELF(HttpStatus.FORBIDDEN, "자신의 권한은 변경할 수 없습니다."),
 
             ;
     private final HttpStatus httpStatus;

@@ -1,12 +1,16 @@
 package com.sparta.trello.auth.jwt;
 
 import com.sparta.trello.auth.UserDetailsServiceImpl;
+import com.sparta.trello.domain.user.adapter.UserAdapter;
 import com.sparta.trello.domain.user.entity.User;
-import com.sparta.trello.domain.user.repository.UserAdapter;
+import com.sparta.trello.exception.custom.jwt.JwtCodeEnum;
+import com.sparta.trello.exception.custom.jwt.detail.JwtAlreadyRemoveException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpMethod;
@@ -17,9 +21,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
-
-import java.io.IOException;
-import java.util.List;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -55,19 +56,19 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
         }
 
         String accessToken = jwtUtil.getAccessTokenFromHeader(request);
-        if (StringUtils.hasText(accessToken) && jwtUtil.validateToken(request, accessToken)) {
+        if (StringUtils.hasText(accessToken) && jwtUtil.validateToken(accessToken)) {
             String username = jwtUtil.getUserInfoFromToken(accessToken).getSubject();
             User findUser = userAdapter.findByUsername(username);
 
             if (findUser.getRefreshToken() != null) {
                 String refreshToken = findUser.getRefreshToken().substring(JwtUtil.BEARER_PREFIX.length());
-                if (StringUtils.hasText(refreshToken) && jwtUtil.validateToken(request, refreshToken)) {
+                if (StringUtils.hasText(refreshToken) && jwtUtil.validateToken(refreshToken)) {
                     log.info("Context Holder 에 담기");
                     setAuthentication(findUser.getUsername());
                 }
-            }
-            else {
+            } else {
                 log.error("DB에 refresh 토큰 없음. 로그인부터 해야 됨");
+                throw new JwtAlreadyRemoveException(JwtCodeEnum.JWT_NOT_FOUND);
             }
         } else {
             log.error("access 토큰 검증 실패, refresh 토큰 검증 시작");
@@ -77,15 +78,14 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
                 User findUser = userAdapter.findByUsername(username);
                 String refreshToken = findUser.getRefreshToken();
 
-                if (StringUtils.hasText(refreshToken) && jwtUtil.validateToken(request, refreshToken)) {
+                if (StringUtils.hasText(refreshToken) && jwtUtil.validateToken(refreshToken)) {
                     String newToken = jwtUtil.createAccessToken(username, findUser.getAuthRole());
                     response.setHeader(JwtUtil.ACCESS_TOKEN_HEADER, newToken);
                     setAuthentication(username);
                 }
-            }
-            else {
+            } else {
                 log.error("access 토큰 없음. 로그인부터 해야 됨");
-                request.setAttribute("jwtException", JwtCodeEnum.JWT_NOT_FOUND);
+                throw new JwtAlreadyRemoveException(JwtCodeEnum.JWT_NOT_FOUND);
             }
         }
 
