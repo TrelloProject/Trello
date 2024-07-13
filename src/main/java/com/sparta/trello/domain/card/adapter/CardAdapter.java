@@ -5,6 +5,7 @@ import com.sparta.trello.domain.card.repository.CardRepository;
 import com.sparta.trello.domain.deck.repository.DeckRepository;
 import com.sparta.trello.domain.user.entity.User;
 import com.sparta.trello.exception.custom.card.CardCodeEnum;
+import com.sparta.trello.exception.custom.card.detail.CardIndexOutOfBoundsException;
 import com.sparta.trello.exception.custom.card.detail.CardNoPermissionException;
 import com.sparta.trello.exception.custom.card.detail.CardNotFoundException;
 import com.sparta.trello.exception.custom.deck.detail.DeckCodeEnum;
@@ -61,7 +62,7 @@ public class CardAdapter {
         List<Card> cards = findAllByDeckId(deckId);
 
         if (cards.isEmpty()) {
-            throw new IllegalArgumentException("덱이 비어 있습니다."); // 커스텀 예외 추가 예정
+            throw new DeckDetailCustomException(DeckCodeEnum.DECK_NOT_FOUND);
         }
 
         Map<Long, Card> cardMap = cards.stream()
@@ -82,7 +83,7 @@ public class CardAdapter {
         }
 
         if (index < 0 || index >= sortedCards.size()) {
-            throw new IndexOutOfBoundsException("인덱스가 범위를 벗어났습니다.");
+            throw new CardIndexOutOfBoundsException(CardCodeEnum.CARD_INDEX_OUT_OF_BOUNDS_ERROR);
         }
 
         return sortedCards.get(index);
