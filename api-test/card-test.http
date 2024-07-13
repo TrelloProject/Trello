@@ -1,0 +1,37 @@
+@baseUrl = http://localhost:8080
+
+### Create Card
+POST {{baseUrl}}/cards
+Content-Type: application/json
+
+{
+  "deckId": 1,
+  "title": "New Card Title",
+  "description": "This is a description of the new card",
+  "startDate": "2024-07-10",
+  "dueDate": "2024-07-20"
+}
+
+### Update Card
+PUT {{baseUrl}}/cards/1
+Content-Type: application/json
+
+{
+  "title": "Updated Card Title",
+  "description": "This is an updated description of the card",
+  "startDate": "2024-07-15",
+  "dueDate": "2024-07-25"
+}
+
+### Move Card
+PATCH {{baseUrl}}/cards/1
+Content-Type: application/json
+
+{
+  "deckId": 2,
+  "index": 1
+}
+
+### Delete Card
+DELETE {{baseUrl}}/cards/1
+Content-Type: application/json

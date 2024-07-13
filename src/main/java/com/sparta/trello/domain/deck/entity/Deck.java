@@ -6,6 +6,7 @@ import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
@@ -25,6 +26,7 @@ public class Deck extends TimeStampEntity {
     @Column
     private Long nextId;
 
+    @Setter
     @Column
     private Long headCardId;
 

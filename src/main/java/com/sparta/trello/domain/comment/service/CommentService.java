@@ -1,6 +1,6 @@
 package com.sparta.trello.domain.comment.service;
 
-import com.sparta.trello.domain.card.repository.CardAdapter;
+import com.sparta.trello.domain.card.adapter.CardAdapter;
 import com.sparta.trello.domain.comment.dto.CreateCommentRequestDto;
 import com.sparta.trello.domain.comment.dto.UpdateCommentRequestDto;
 import com.sparta.trello.domain.comment.entity.Comment;
