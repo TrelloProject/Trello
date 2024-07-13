@@ -3,16 +3,16 @@ package com.sparta.trello.auth.jwt;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sparta.trello.common.response.MessageResponseDto;
 import com.sparta.trello.exception.custom.jwt.JwtException;
-import com.sparta.trello.exception.custom.user.detail.UserWithdrawnException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.io.IOException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
+
+import java.io.IOException;
 
 @Slf4j
 @Component

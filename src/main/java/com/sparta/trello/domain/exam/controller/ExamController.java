@@ -9,7 +9,6 @@ import com.sparta.trello.domain.exam.dto.ExamResponseDto;
 import com.sparta.trello.domain.exam.dto.ExamUpdateRequestDto;
 import com.sparta.trello.domain.exam.service.ExamService;
 import jakarta.validation.Valid;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;

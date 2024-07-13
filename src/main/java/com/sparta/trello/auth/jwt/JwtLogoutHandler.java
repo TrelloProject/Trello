@@ -1,7 +1,7 @@
 package com.sparta.trello.auth.jwt;
 
-import com.sparta.trello.domain.user.entity.User;
 import com.sparta.trello.domain.user.adapter.UserAdapter;
+import com.sparta.trello.domain.user.entity.User;
 import com.sparta.trello.exception.custom.jwt.JwtCodeEnum;
 import com.sparta.trello.exception.custom.jwt.JwtException;
 import jakarta.servlet.http.HttpServletRequest;

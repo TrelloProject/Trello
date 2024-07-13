@@ -7,11 +7,12 @@ import com.sparta.trello.exception.custom.user.UserCodeEnum;
 import com.sparta.trello.exception.custom.user.detail.DuplicatedUsernameUserException;
 import com.sparta.trello.exception.custom.user.detail.UserNotFoundException;
 import com.sparta.trello.exception.custom.user.detail.UserWithdrawnException;
-import java.util.Objects;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
+
+import java.util.Objects;
+import java.util.Optional;
 
 @Slf4j
 @Component

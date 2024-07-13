@@ -28,6 +28,8 @@ spring:
 
 logging.level:
   root: info
+  org.hibernate.SQL: debug
+  org.hibernate.type.descriptor.sql.BasicBinder: trace
 #  org.hibernate.SQL: debug
 #  org.springframework.security: debug
 #  org.springframework.web: debug
