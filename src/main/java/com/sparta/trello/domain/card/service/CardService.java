@@ -64,19 +64,7 @@ public class CardService {
     public void updateCard(Long cardId, UpdateCardRequestDto updateCardRequestDto, User user) {
         Card card = cardAdapter.findById(cardId);
         cardAdapter.validateCardOwnership(card, user);
-
-        if (updateCardRequestDto.getTitle() != null) {
-            card.setTitle(updateCardRequestDto.getTitle());
-        }
-        if (updateCardRequestDto.getDescription() != null) {
-            card.setDescription(updateCardRequestDto.getDescription());
-        }
-        if (updateCardRequestDto.getStartDate() != null) {
-            card.setStartDate(updateCardRequestDto.getStartDate());
-        }
-        if (updateCardRequestDto.getDueDate() != null) {
-            card.setDueDate(updateCardRequestDto.getDueDate());
-        }
+        card.update(updateCardRequestDto);
         cardAdapter.save(card);
         log.info("Card updated with id: {}", card.getId());
     }
