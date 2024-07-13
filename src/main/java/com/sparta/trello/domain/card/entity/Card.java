@@ -1,6 +1,7 @@
 package com.sparta.trello.domain.card.entity;
 
 import com.sparta.trello.common.TimeStampEntity;
+import com.sparta.trello.domain.card.dto.UpdateCardRequestDto;
 import com.sparta.trello.domain.deck.entity.Deck;
 import com.sparta.trello.domain.user.entity.User;
 import jakarta.persistence.Entity;
@@ -47,16 +48,12 @@ public class Card extends TimeStampEntity {
     @Setter
     private Long nextId;
 
-    @Setter
     private String title;
 
-    @Setter
     private String description;
 
-    @Setter
     private LocalDate startDate;
 
-    @Setter
     private LocalDate dueDate;
 
     @Builder
@@ -69,5 +66,16 @@ public class Card extends TimeStampEntity {
         this.description = description;
         this.startDate = startDate;
         this.dueDate = dueDate;
+    }
+
+    public void update(UpdateCardRequestDto updateCardRequestDto) {
+        this.title =
+            updateCardRequestDto.getTitle() == null ? this.title : updateCardRequestDto.getTitle();
+        this.description = updateCardRequestDto.getDescription() == null ? this.description
+            : updateCardRequestDto.getDescription();
+        this.startDate = updateCardRequestDto.getStartDate() == null ? this.startDate
+            : updateCardRequestDto.getStartDate();
+        this.dueDate = updateCardRequestDto.getDueDate() == null ? this.dueDate
+            : updateCardRequestDto.getDueDate();
     }
 }
