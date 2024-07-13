@@ -27,8 +27,14 @@ public class CardService {
         Deck deck = deckAdapter.findById(createCardRequestDto.getDeckId());
 
         // 새로운 카드 생성
-        Card newCard = Card.builder().deck(deck).user(user).title(createCardRequestDto.getTitle())
-            .description(createCardRequestDto.getDescription()).build();
+        Card newCard = Card.builder()
+            .deck(deck)
+            .user(user)
+            .title(createCardRequestDto.getTitle())
+            .description(createCardRequestDto.getDescription())
+            .startDate(createCardRequestDto.getStartDate())
+            .dueDate(createCardRequestDto.getDueDate())
+            .build();
 
         // 생성된 카드 저장
         newCard = cardAdapter.save(newCard);
@@ -88,18 +94,14 @@ public class CardService {
         // 이동할 위치
         int index = moveCardRequestDto.getIndex();
 
-        // 현재 덱에서 카드 제거
-        if (!currDeck.equals(targetDeck)) {
-            if (currDeck.getHeadCardId().equals(cardId)) { // 이동할 카드가 헤드일 경우
-                currDeck.setHeadCardId(card.getNextId());
-                deckAdapter.save(currDeck);
-            } else {
-                Card prevCard = cardAdapter.findCardByNextId(cardId);
-                if (prevCard != null) {
-                    prevCard.setNextId(card.getNextId());
-                    cardAdapter.save(prevCard);
-                }
-            }
+        // 이동할 카드의 앞 뒤 연결
+        if (currDeck.getHeadCardId().equals(cardId)) { // 이동할 카드가 헤드일 경우
+            currDeck.setHeadCardId(card.getNextId());
+            deckAdapter.save(currDeck);
+        } else {
+            Card prevCard = cardAdapter.findCardByNextId(cardId);
+            prevCard.setNextId(card.getNextId());
+            cardAdapter.save(prevCard);
         }
 
         // 타겟 덱에서의 위치 계산
