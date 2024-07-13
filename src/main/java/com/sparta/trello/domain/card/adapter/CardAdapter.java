@@ -2,9 +2,18 @@ package com.sparta.trello.domain.card.adapter;
 
 import com.sparta.trello.domain.card.entity.Card;
 import com.sparta.trello.domain.card.repository.CardRepository;
+import com.sparta.trello.domain.deck.repository.DeckRepository;
 import com.sparta.trello.domain.user.entity.User;
+import com.sparta.trello.exception.custom.card.CardCodeEnum;
+import com.sparta.trello.exception.custom.card.detail.CardNoPermissionException;
+import com.sparta.trello.exception.custom.card.detail.CardNotFoundException;
+import com.sparta.trello.exception.custom.deck.detail.DeckCodeEnum;
+import com.sparta.trello.exception.custom.deck.detail.DeckDetailCustomException;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -15,6 +24,7 @@ import org.springframework.stereotype.Component;
 public class CardAdapter {
 
     private final CardRepository cardRepository;
+    private final DeckRepository deckRepository;
 
     public Card save(Card card) {
         return cardRepository.save(card);
@@ -26,13 +36,13 @@ public class CardAdapter {
 
     public void validateCardOwnership(Card card, User user) {
         if (!card.getUser().getId().equals(user.getId())) {
-            throw new IllegalArgumentException("(임시 메시지)사용자의 권한이 없습니다."); // 커스텀 예외 추가 예정
+            throw new CardNoPermissionException(CardCodeEnum.CARD_NO_PERMISSION);
         }
     }
 
     public Card findById(Long cardId) {
         return cardRepository.findById(cardId)
-            .orElseThrow(() -> new IllegalArgumentException("유효하지 않은 카드 ID입니다.")); // 커스텀 예외 추가 예정
+            .orElseThrow(() -> new CardNotFoundException(CardCodeEnum.CARD_NOT_FOUND));
     }
 
     public Optional<Card> findLastCardByDeckId(Long deckId) {
@@ -49,9 +59,32 @@ public class CardAdapter {
 
     public Card findCardByDeckIdAndIndex(Long deckId, int index) {
         List<Card> cards = findAllByDeckId(deckId);
-        if (index < 0 || index >= cards.size()) {
-            throw new IllegalArgumentException("(임시 메시지) 인덱스 out of bound"); // 커스텀 예외 추가 예정
+
+        if (cards.isEmpty()) {
+            throw new IllegalArgumentException("덱이 비어 있습니다."); // 커스텀 예외 추가 예정
         }
-        return cards.get(index);
+
+        Map<Long, Card> cardMap = cards.stream()
+            .collect(Collectors.toMap(Card::getId, card -> card));
+
+        // 덱의 헤드 카드 찾기
+        Long headCardId = deckRepository.findById(deckId)
+            .orElseThrow(() -> new DeckDetailCustomException(
+                DeckCodeEnum.DECK_NOT_FOUND)).getHeadCardId();
+        Card headCard = cardMap.get(headCardId);
+
+        // nextId를 기준으로 카드 정렬
+        List<Card> sortedCards = new LinkedList<>();
+        Card currCard = headCard;
+        while (currCard != null) {
+            sortedCards.add(currCard);
+            currCard = cardMap.get(currCard.getNextId());
+        }
+
+        if (index < 0 || index >= sortedCards.size()) {
+            throw new IndexOutOfBoundsException("인덱스가 범위를 벗어났습니다.");
+        }
+
+        return sortedCards.get(index);
     }
 }
