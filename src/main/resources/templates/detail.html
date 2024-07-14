@@ -10,52 +10,26 @@
   <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 </head>
 <body>
-<h1 id="board-title">Board Name</h1>
-<p id="board-description">Board Description</p>
+<h1 id="board-title" th:text="${board.getTitle()}">Board Name</h1>
+<p id="board-description" th:text="${board.getDescription()}">Board Description</p>
 <button id="inviteBoardBtn">보드 초대</button>
 <button id="addDeckBtn">덱 추가</button>
 <button id="editBoardBtn">보드 수정</button>
 <button id="deleteBoardBtn">보드 삭제</button>
 <div id="board">
-  <div class="deck" draggable="true" data-id="1">
+  <div class="deck" draggable="true" data-id="1"
+       th:data-id="${items.getDeck().getId()}" th:each="items : ${board.getBoardItems()}">
     <div class="deck-header">
       <div class="deck-menu">
         <button class="editBtn">수정</button>
         <button class="deleteBtn">삭제</button>
       </div>
-      <h2>Deck 1</h2>
+      <h2 th:text="${items.getDeck().getTitle()}">Deck 1</h2>
     </div>
     <ul class="card-list">
-      <li class="draggable" draggable="true" data-id="1">
-        <div class="el">HTML</div>
-      </li>
-      <li class="draggable" draggable="true" data-id="2">
-        <div class="el">CSSddddddddddddddddddddddddddddddd</div>
-      </li>
-      <li class="draggable" draggable="true" data-id="3">
-        <div class="el">JavaScript</div>
-      </li>
-    </ul>
-    <button class="addCardBtn bottom-button-design">Add Card</button>
-  </div>
-
-  <div class="deck" draggable="true" data-id="2">
-    <div class="deck-header">
-      <div class="deck-menu">
-        <button class="editBtn">수정</button>
-        <button class="deleteBtn">삭제</button>
-      </div>
-      <h2>Deck 2</h2>
-    </div>
-    <ul class="card-list">
-      <li class="draggable" draggable="true" data-id="4">
-        <div class="el">React</div>
-      </li>
-      <li class="draggable" draggable="true" data-id="5">
-        <div class="el">Vue</div>
-      </li>
-      <li class="draggable" draggable="true" data-id="6">
-        <div class="el">Next JS</div>
+      <li class="draggable" draggable="true" data-id="1"
+          th:data-id="${cards.getId()}" th:each="cards : ${items.getCards()}">
+        <div class="el" th:text="${cards.getTitle()}">HTML</div>
       </li>
     </ul>
     <button class="addCardBtn bottom-button-design">Add Card</button>
@@ -87,13 +61,64 @@
     <span class="close-btn">&times;</span>
     <h2>Edit Board</h2>
     <label for="board-name-input">Board Name</label>
-    <input type="text" id="board-name-input" value="Board Name">
+    <input type="text" id="board-name-input" th:text="${board.getTitle()}">
     <label for="board-description-input">Board Description</label>
-    <textarea id="board-description-input">Board Description</textarea>
+    <textarea id="board-description-input" th:text="${board.getDescription()}">Board Description</textarea>
     <button id="save-board-btn" class="bottom-button-design">Save</button>
   </div>
 </div>
 
 <script th:src="@{/js/detail.js}"></script>
+<script>
+  const urlPath = window.location.pathname;
+  const boardId = urlPath.substring(urlPath.lastIndexOf('/') + 1, urlPath.length);
+
+  $('#save-board-btn').on('click', function () {
+    const title = $('#board-name-input').val();
+    const description = $('#board-description-input').val();
+
+    const data = {
+      title: title,
+      description: description
+    };
+    console.log(data);
+
+    $.ajax({
+      type: 'put',
+      url: '/boards/' + boardId,
+      data: JSON.stringify(data),
+      contentType: "application/json;charset=utf-8"
+    })
+    .done(function(result, status, xhr) {
+      location.replace(location.href);
+    })
+    .fail(function(xhr, status, er) {
+      alert("보드 수정 실패");
+    });
+  });
+
+  $('#inviteBoardBtn').on('click', function () {
+    const newMember = prompt("초대할 사용자 아이디");
+
+    const data = {
+      username: newMember
+    }
+
+    if (newMember) {
+      $.ajax({
+        type: 'post',
+        url: '/boards/' + boardId + '/invitation',
+        data: JSON.stringify(data),
+        contentType: "application/json;charset=utf-8"
+      })
+      .done(function(result, status, xhr) {
+        alert("초대 성공");
+      })
+      .fail(function(xhr, status, er) {
+        alert("보드 수정 실패");
+      });
+    }
+  });
+</script>
 </body>
 </html>

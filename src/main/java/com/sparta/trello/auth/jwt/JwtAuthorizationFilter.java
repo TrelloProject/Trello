@@ -69,7 +69,6 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
 
         String accessToken = jwtUtil.getAccessTokenFromCookie(request);
 //        String accessToken = jwtUtil.getAccessTokenFromHeader(request);
-        log.info("토큰: {}", accessToken);
         if (StringUtils.hasText(accessToken) && jwtUtil.validateToken(accessToken)) {
             String username = jwtUtil.getUserInfoFromToken(accessToken).getSubject();
             User findUser = userAdapter.findByUsername(username);

@@ -70,28 +70,24 @@
       description: boardDescription
     }
 
-    // $.ajax({
-    //   type: 'post',
-    //   url: '',
-    //   data: JSON.stringify(data),
-    //   contentType: "application/json;charset=utf-8"
-    // })
-    // .done(function(result, status, xhr) {
-    //   if (result.statusCode === 200) {
-    //     const newBoardItem = $(`<li class="board-list-item"><a href="#">${boardTitle}</a><p>${boardDescription}</p></li>`);
-    //     newBoardItem.appendTo('.board-list');
-    //
-    //     location.replace("/");
-    //   }
-    // })
-    // .fail(function(xhr, status, er) {
-    //   console.log("실패");
-    // })
-    // .always(function () {
-    //   $('#modal').css('display', 'none');
-    //   $('#modal-title').val('');
-    //   $('#modal-description').val('');
-    // });
+    console.log(data);
+
+    $.ajax({
+      type: 'post',
+      url: '/boards',
+      data: JSON.stringify(data),
+      contentType: "application/json;charset=utf-8"
+    })
+    .done(function(result, status, xhr) {
+    })
+    .fail(function(xhr, status, er) {
+      console.log("보드 생성 실패");
+    })
+    .always(function () {
+      $('#modal').css('display', 'none');
+      $('#modal-title').val('');
+      $('#modal-description').val('');
+    });
   });
 
   $('#cancel-button').click(function() {

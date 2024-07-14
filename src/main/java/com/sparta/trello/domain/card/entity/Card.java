@@ -18,12 +18,14 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
 @Getter
 @NoArgsConstructor
 @Entity
+@ToString
 @Table(name = "card", indexes = {
     @Index(name = "idx_card_deck_id", columnList = "deck_id"),
     @Index(name = "idx_card_next_id", columnList = "next_id"),

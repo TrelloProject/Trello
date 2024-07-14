@@ -17,7 +17,6 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) {
-        log.info("username: {}", username);
         User findUser = userAdapter.findByUsername(username);
         userAdapter.checkWithdrawn(findUser);
         return new UserDetailsImpl(findUser);

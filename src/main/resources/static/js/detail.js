@@ -1,7 +1,6 @@
 (() => {
   const $ = (select) => document.querySelectorAll(select);
   const board = document.getElementById('board');
-  const inviteBoardBtn = document.getElementById('inviteBoardBtn');
   const addDeckBtn = document.getElementById('addDeckBtn');
   const editBoardBtn = document.getElementById('editBoardBtn');
   const deleteBoardBtn = document.getElementById('deleteBoardBtn');
@@ -21,6 +20,9 @@
   const boardNameInput = document.getElementById('board-name-input');
   const boardDescriptionInput = document.getElementById('board-description-input');
   let currentEditingCard = null; // To track which card is being edited
+
+  const urlPath = window.location.pathname;
+  const boardId = urlPath.substring(urlPath.lastIndexOf('/') + 1, urlPath.length);
 
   function initDraggables(draggables) {
     draggables.forEach(el => {
@@ -234,12 +236,6 @@
       });
     });
   }
-
-  inviteBoardBtn.addEventListener('click', () => {
-    const newMember = prompt("초대할 사용자 아이디");
-    if (newMember) {
-    }
-  });
 
   editBoardBtn.addEventListener('click', () => {
     boardNameInput.value = boardTitle.textContent;
