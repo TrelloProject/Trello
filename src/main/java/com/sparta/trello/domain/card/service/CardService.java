@@ -1,5 +1,8 @@
 package com.sparta.trello.domain.card.service;
 
+import com.sparta.trello.domain.board.entity.Board;
+import com.sparta.trello.domain.boardMember.entity.BoardMember;
+import com.sparta.trello.domain.boardMember.repository.BoardMemberAdapter;
 import com.sparta.trello.domain.card.adapter.CardAdapter;
 import com.sparta.trello.domain.card.dto.CreateCardRequestDto;
 import com.sparta.trello.domain.card.dto.MoveCardRequestDto;
@@ -21,10 +24,16 @@ public class CardService {
 
     private final CardAdapter cardAdapter;
     private final DeckAdapter deckAdapter;
+    private final BoardMemberAdapter boardMemberAdapter;
 
     @Transactional
     public void createCard(CreateCardRequestDto createCardRequestDto, User user) {
         Deck deck = deckAdapter.findById(createCardRequestDto.getDeckId());
+
+        // 보드 멤버 검증
+        Board board = deck.getBoard();
+        BoardMember boardMember = boardMemberAdapter.findByBoardAndUser(board, user);
+        boardMemberAdapter.validateBoardMember(boardMember);
 
         // 새로운 카드 생성
         Card newCard = Card.builder()
@@ -56,14 +65,23 @@ public class CardService {
     @Transactional(readOnly = true)
     public Card getCard(Long cardId, User user) {
         Card card = cardAdapter.findById(cardId);
-        cardAdapter.validateCardOwnership(card, user);
+
+        // 보드 멤버 검증
+        Board board = card.getDeck().getBoard();
+        BoardMember boardMember = boardMemberAdapter.findByBoardAndUser(board, user);
+        boardMemberAdapter.validateBoardMember(boardMember);
         return card;
     }
 
     @Transactional
     public void updateCard(Long cardId, UpdateCardRequestDto updateCardRequestDto, User user) {
         Card card = cardAdapter.findById(cardId);
-        cardAdapter.validateCardOwnership(card, user);
+
+        // 보드 멤버 검증
+        Board board = card.getDeck().getBoard();
+        BoardMember boardMember = boardMemberAdapter.findByBoardAndUser(board, user);
+        boardMemberAdapter.validateBoardMember(boardMember);
+
         card.update(updateCardRequestDto);
         cardAdapter.save(card);
         log.info("Card updated with id: {}", card.getId());
@@ -72,7 +90,11 @@ public class CardService {
     @Transactional
     public void moveCard(Long cardId, MoveCardRequestDto moveCardRequestDto, User user) {
         Card card = cardAdapter.findById(cardId);
-        cardAdapter.validateCardOwnership(card, user);
+
+        // 보드 멤버 검증
+        Board board = card.getDeck().getBoard();
+        BoardMember boardMember = boardMemberAdapter.findByBoardAndUser(board, user);
+        boardMemberAdapter.validateBoardMember(boardMember);
 
         // 현재 덱
         Deck currDeck = card.getDeck();
@@ -119,7 +141,11 @@ public class CardService {
     @Transactional
     public void deleteCard(Long cardId, User user) {
         Card card = cardAdapter.findById(cardId);
-        cardAdapter.validateCardOwnership(card, user);
+
+        // 보드 멤버 검증
+        Board board = card.getDeck().getBoard();
+        BoardMember boardMember = boardMemberAdapter.findByBoardAndUser(board, user);
+        boardMemberAdapter.validateBoardMember(boardMember);
 
         Deck deck = card.getDeck();
         if (deck.getHeadCardId().equals(cardId)) {
