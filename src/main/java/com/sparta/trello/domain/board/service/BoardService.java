@@ -56,6 +56,13 @@ public class BoardService {
     }
 
     @Transactional(readOnly = true)
+    public BoardResponseDto getBoard(Long boardId, User user) {
+        Board board = boardAdapter.findById(boardId);
+        boardMemberAdapter.findByBoardAndUser(board, user);
+        return new BoardResponseDto(board);
+    }
+
+    @Transactional(readOnly = true)
     public List<BoardResponseDto> getAllBoards(User user) {
         List<BoardMember> boardMember = boardMemberAdapter.findByUser(user);
         List<Board> boards = new ArrayList<>();

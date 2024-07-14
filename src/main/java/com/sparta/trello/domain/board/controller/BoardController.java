@@ -38,6 +38,14 @@ public class BoardController {
         return ResponseUtils.of(HttpStatus.OK, "보드 삭제에 성공했습니다.");
     }
 
+    @GetMapping("/{boardId}")
+    public ResponseEntity<DataResponseDto<BoardResponseDto>> getBoard(@PathVariable Long boardId,
+                                                                      @AuthenticationPrincipal UserDetailsImpl userDetails){
+        BoardResponseDto boardResponseDto = boardService.getBoard(boardId, userDetails.getUser());
+        return ResponseUtils.of(HttpStatus.OK, "보드 조회에 성공했습니다.", boardResponseDto);
+    }
+
+
     @GetMapping
     public ResponseEntity<DataResponseDto<List<BoardResponseDto>>> getAllBoards(
             @AuthenticationPrincipal UserDetailsImpl userDetails) {
