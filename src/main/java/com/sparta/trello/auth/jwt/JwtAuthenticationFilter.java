@@ -10,6 +10,7 @@ import com.sparta.trello.domain.user.entity.UserAuthRole;
 import com.sparta.trello.exception.custom.user.detail.UserWithdrawnException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -31,7 +32,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         this.jwtUtil = jwtUtil;
         this.objectMapper = objectMapper;
         this.userAdapter = userAdapter;
-        setFilterProcessesUrl("/users/login");
+        setFilterProcessesUrl("/api/users/login");
     }
 
     @Override
@@ -67,7 +68,10 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         findUser.updateRefreshToken(refreshToken);
         userAdapter.save(findUser);
 
-        response.addHeader(JwtUtil.ACCESS_TOKEN_HEADER, accessToken);
+        Cookie cookie = new Cookie(JwtUtil.ACCESS_TOKEN_HEADER, accessToken.replace(" ", "%20"));
+        cookie.setPath("/");
+        cookie.setMaxAge((int) JwtUtil.ACCESS_TOKEN_TIME);
+        response.addCookie(cookie);
         sendResponse(response, HttpStatus.OK, "로그인 성공");
     }
 
@@ -91,4 +95,6 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         response.setStatus(status.value());
         response.getWriter().write(body);
     }
+
+
 }

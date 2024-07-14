@@ -9,6 +9,8 @@ import com.sparta.trello.domain.board.repository.BoardAdapter;
 import com.sparta.trello.domain.boardMember.entity.BoardMember;
 import com.sparta.trello.domain.boardMember.entity.BoardRole;
 import com.sparta.trello.domain.boardMember.repository.BoardMemberAdapter;
+import com.sparta.trello.domain.boardMember.repository.BoardMemberQueryRepository;
+import com.sparta.trello.domain.boardMember.repository.BoardMemberRepository;
 import com.sparta.trello.domain.user.adapter.UserAdapter;
 import com.sparta.trello.domain.user.entity.User;
 import com.sparta.trello.exception.custom.boardMember.detail.BoardMemberCodeEnum;
@@ -29,6 +31,7 @@ public class BoardService {
     private final BoardAdapter boardAdapter;
     private final BoardMemberAdapter boardMemberAdapter;
     private final UserAdapter userAdapter;
+    private final BoardMemberRepository boardMemberRepository;
 
     @Transactional
     public BoardResponseDto createBoard(CreateBoardRequest request, User user) {
@@ -57,12 +60,10 @@ public class BoardService {
 
     @Transactional(readOnly = true)
     public List<BoardResponseDto> getAllBoards(User user) {
-        List<BoardMember> boardMember = boardMemberAdapter.findByUser(user);
-        List<Board> boards = new ArrayList<>();
-        for(BoardMember member : boardMember) {
-            boards.add(member.getBoard());
-        }
-        return boards.stream().map(BoardResponseDto::new).toList();
+        List<BoardMember> boardMembers = boardMemberRepository.findByUserId(user.getId());
+        return boardMembers.stream()
+            .map(member -> new BoardResponseDto(member.getBoard()))
+            .toList();
     }
 
     @Transactional

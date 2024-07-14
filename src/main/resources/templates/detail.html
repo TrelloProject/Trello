@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>trello</title>
+  <link rel="stylesheet" th:href="@{/css/reset.css}">
+  <link rel="stylesheet" th:href="@{/css/style.css}">
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+</head>
+<body>
+<h1 id="board-title">Board Name</h1>
+<p id="board-description">Board Description</p>
+<button id="inviteBoardBtn">보드 초대</button>
+<button id="addDeckBtn">덱 추가</button>
+<button id="editBoardBtn">보드 수정</button>
+<button id="deleteBoardBtn">보드 삭제</button>
+<div id="board">
+  <div class="deck" draggable="true" data-id="1">
+    <div class="deck-header">
+      <div class="deck-menu">
+        <button class="editBtn">수정</button>
+        <button class="deleteBtn">삭제</button>
+      </div>
+      <h2>Deck 1</h2>
+    </div>
+    <ul class="card-list">
+      <li class="draggable" draggable="true" data-id="1">
+        <div class="el">HTML</div>
+      </li>
+      <li class="draggable" draggable="true" data-id="2">
+        <div class="el">CSSddddddddddddddddddddddddddddddd</div>
+      </li>
+      <li class="draggable" draggable="true" data-id="3">
+        <div class="el">JavaScript</div>
+      </li>
+    </ul>
+    <button class="addCardBtn bottom-button-design">Add Card</button>
+  </div>
+
+  <div class="deck" draggable="true" data-id="2">
+    <div class="deck-header">
+      <div class="deck-menu">
+        <button class="editBtn">수정</button>
+        <button class="deleteBtn">삭제</button>
+      </div>
+      <h2>Deck 2</h2>
+    </div>
+    <ul class="card-list">
+      <li class="draggable" draggable="true" data-id="4">
+        <div class="el">React</div>
+      </li>
+      <li class="draggable" draggable="true" data-id="5">
+        <div class="el">Vue</div>
+      </li>
+      <li class="draggable" draggable="true" data-id="6">
+        <div class="el">Next JS</div>
+      </li>
+    </ul>
+    <button class="addCardBtn bottom-button-design">Add Card</button>
+  </div>
+</div>
+
+<div id="modal" class="modal">
+  <div class="modal-content">
+    <div>
+      <span class="close-btn">&times;</span>
+      <button id="card-edit-btn">수정</button>
+      <button id="card-delete-btn">삭제</button>
+    </div>
+    <h3>제목</h3>
+    <h2 id="modal-title">Card Title</h2>
+    <h3>설명</h3>
+    <p id="modal-description">Card Description</p>
+    <h3>댓글</h3>
+    <ul id="comment-list">
+      <!-- Comments will be appended here -->
+    </ul>
+    <textarea id="new-comment" placeholder="Add a comment"></textarea>
+    <button id="add-comment-btn" class="bottom-button-design">Add Comment</button>
+  </div>
+</div>
+
+<div id="editBoardModal" class="modal">
+  <div class="modal-content">
+    <span class="close-btn">&times;</span>
+    <h2>Edit Board</h2>
+    <label for="board-name-input">Board Name</label>
+    <input type="text" id="board-name-input" value="Board Name">
+    <label for="board-description-input">Board Description</label>
+    <textarea id="board-description-input">Board Description</textarea>
+    <button id="save-board-btn" class="bottom-button-design">Save</button>
+  </div>
+</div>
+
+<script th:src="@{/js/detail.js}"></script>
+</body>
+</html>
