@@ -1,7 +1,6 @@
 (() => {
   const $ = (select) => document.querySelectorAll(select);
   const board = document.getElementById('board');
-  const addDeckBtn = document.getElementById('addDeckBtn');
   const editBoardBtn = document.getElementById('editBoardBtn');
   const deleteBoardBtn = document.getElementById('deleteBoardBtn');
   const modal = document.getElementById('modal');
@@ -12,7 +11,6 @@
   const newComment = document.getElementById('new-comment');
   const addCommentBtn = document.getElementById('add-comment-btn');
   const closeBtns = document.querySelectorAll('.close-btn');
-  const saveBoardBtn = document.getElementById('save-board-btn');
   const cardEditBtn = document.getElementById('card-edit-btn');
   const cardDeleteBtn = document.getElementById('card-delete-btn');
   const boardTitle = document.getElementById('board-title');
@@ -81,12 +79,6 @@
 
       const addCardBtn = deck.querySelector('.addCardBtn');
       addCardBtn.addEventListener('click', () => addCard(deck));
-
-      const editBtn = deck.querySelector('.editBtn');
-      editBtn.addEventListener('click', () => editDeck(deck));
-
-      const deleteBtn = deck.querySelector('.deleteBtn');
-      deleteBtn.addEventListener('click', () => deleteDeck(deck));
     });
 
     board.addEventListener('dragover', e => {
@@ -106,40 +98,6 @@
       const draggingElements = document.querySelectorAll('.dragging');
       draggingElements.forEach(el => el.classList.remove('dragging'));
     });
-  }
-
-  function addDeck() {
-    const deckName = prompt('Enter the name of the new deck:');
-    if (!deckName) {
-      return; // If no name is provided, do not create the deck
-    }
-
-    const deckId = Date.now();
-    const deck = document.createElement('div');
-    deck.classList.add('deck');
-    deck.draggable = true;
-    deck.setAttribute('data-id', deckId);
-
-    const header = document.createElement('div');
-    header.classList.add('deck-header');
-    header.innerHTML = `<div class="deck-menu"><button class="editBtn">수정</button><button class="deleteBtn">삭제</button></div><h2>${deckName}</h2>`;
-
-    const ul = document.createElement('ul');
-    ul.classList.add('card-list');
-
-    const addCardBtn = document.createElement('button');
-    addCardBtn.classList.add('addCardBtn');
-    addCardBtn.textContent = 'Add Card';
-
-    deck.appendChild(header);
-    deck.appendChild(ul);
-    deck.appendChild(addCardBtn);
-    board.appendChild(deck);
-
-    initDecks([deck]);
-
-    // Ensure the new deck is visible by scrolling to the right
-    board.scrollLeft = board.scrollWidth;
   }
 
   function addCard(deck) {
@@ -168,20 +126,6 @@
     const addCardBtnHeight = deck.querySelector('.addCardBtn').offsetHeight;
 
     ul.style.maxHeight = `${maxHeight - headerHeight - addCardBtnHeight - deckPadding}px`;
-  }
-
-  function editDeck(deck) {
-    const deckTitle = deck.querySelector('h2');
-    const newTitle = prompt('Enter new deck title:', deckTitle.textContent);
-    if (newTitle) {
-      deckTitle.textContent = newTitle;
-    }
-  }
-
-  function deleteDeck(deck) {
-    if (confirm('Are you sure you want to delete this deck?')) {
-      deck.remove();
-    }
   }
 
   function showCardDetails(card) {
@@ -250,12 +194,6 @@
     e.target.closest('.modal').style.display = 'none';
   }));
 
-  saveBoardBtn.addEventListener('click', () => {
-    boardTitle.textContent = boardNameInput.value;
-    boardDescription.textContent = boardDescriptionInput.value;
-    editBoardModal.style.display = 'none';
-  });
-
   cardEditBtn.addEventListener('click', () => {
     const newTitle = prompt("Edit card title:", modalTitle.textContent);
     if (newTitle !== null) {
@@ -280,8 +218,6 @@
       modal.style.display = 'none'; // Close the modal after deleting the card
     }
   });
-
-  addDeckBtn.addEventListener('click', addDeck);
 
   addCommentBtn.addEventListener('click', () => {
     const commentText = newComment.value.trim();

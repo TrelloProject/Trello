@@ -74,6 +74,7 @@
   const urlPath = window.location.pathname;
   const boardId = urlPath.substring(urlPath.lastIndexOf('/') + 1, urlPath.length);
 
+  // 보드 수정
   $('#save-board-btn').on('click', function () {
     const title = $('#board-name-input').val();
     const description = $('#board-description-input').val();
@@ -98,6 +99,7 @@
     });
   });
 
+  // 보드 초대
   $('#inviteBoardBtn').on('click', function () {
     const newMember = prompt("초대할 사용자 아이디");
 
@@ -121,6 +123,7 @@
     }
   });
 
+  // 권한 부여
   $('#grantBoardManagerBtn').on('click', function () {
     const newMember = prompt("매니저 권한을 줄 사용자 아이디");
 
@@ -141,6 +144,79 @@
       })
       .fail(function(xhr, status, er) {
         alert("권한 부여 실패");
+      });
+    }
+  });
+
+  // 덱 추가
+  $('#addDeckBtn').on('click', function () {
+    const deckName = prompt('새로운 덱 제목');
+    if (!deckName) {
+      return;
+    }
+
+    const data = {
+      title: deckName
+    }
+
+    $.ajax({
+      type: 'post',
+      url: '/decks/' + boardId,
+      data: JSON.stringify(data),
+      contentType: "application/json;charset=utf-8"
+    })
+    .done(function(result, status, xhr) {
+      location.replace(location.href);
+    })
+    .fail(function(xhr, status, er) {
+      alert("덱 생성 실패");
+    });
+  });
+
+  // 덱 수정
+  $('.deck').on('click', '.editBtn', function() {
+    const deck = $(this).closest('.deck');
+    const deckTitle = deck.find('h2').text();
+
+    const newTitle = prompt('덱 이름 변경', deckTitle);
+    if (!newTitle) {
+      return;
+    }
+
+    const data = {
+      title: newTitle
+    }
+
+    const deckId = deck.attr('data-id');
+    $.ajax({
+      type: 'put',
+      url: '/decks/' + deckId,
+      data: JSON.stringify(data),
+      contentType: "application/json;charset=utf-8"
+    })
+    .done(function(result, status, xhr) {
+      location.replace(location.href);
+    })
+    .fail(function(xhr, status, er) {
+      alert("덱 생성 실패");
+    });
+  });
+
+  // 덱 삭제
+  $('.deck').on('click', '.deleteBtn', function() {
+    const deck = $(this).closest('.deck');
+
+    if (confirm('현재 덱을 삭제하시겠습니까?')) {
+      const deckId = deck.attr('data-id');
+      $.ajax({
+        type: 'delete',
+        url: '/decks/' + deckId
+      })
+      .done(function(result, status, xhr) {
+        deck.remove();
+      })
+      .fail(function(xhr, status, er) {
+        alert("덱 생성 실패");
       });
     }
   });
