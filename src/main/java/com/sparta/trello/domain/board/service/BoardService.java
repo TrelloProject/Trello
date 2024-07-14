@@ -124,7 +124,6 @@ public class BoardService {
             sortedDeckDtos.add(new DeckDto(currentDeck));
             currentDeckId = currentDeck.getNextId();
         }
-        log.info(sortedDeckDtos.toString());
 
         for (DeckDto deckDto : sortedDeckDtos) {
             Deck deck = deckMap.get(deckDto.getId());
@@ -141,7 +140,6 @@ public class BoardService {
                 sortedCardDtos.add(new CardDto(currentCard));
                 currentCardId = currentCard.getNextId();
             }
-            log.info(sortedCardDtos.toString());
 
             // Create a new BoardItemsDto for each deck and add it to the list
             BoardItemsDto boardItems = new BoardItemsDto(deckDto, sortedCardDtos);

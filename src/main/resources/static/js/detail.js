@@ -76,9 +76,6 @@
           }
         }
       });
-
-      const addCardBtn = deck.querySelector('.addCardBtn');
-      addCardBtn.addEventListener('click', () => addCard(deck));
     });
 
     board.addEventListener('dragover', e => {
@@ -98,23 +95,6 @@
       const draggingElements = document.querySelectorAll('.dragging');
       draggingElements.forEach(el => el.classList.remove('dragging'));
     });
-  }
-
-  function addCard(deck) {
-    const cardId = Date.now();
-    const card = document.createElement('li');
-    card.classList.add('draggable');
-    card.draggable = true;
-    card.setAttribute('data-id', cardId);
-    card.innerHTML = '<div class="el">New Card</div>';
-
-    const ul = deck.querySelector('ul');
-    ul.appendChild(card);
-
-    initDraggables([card]);
-
-    // Adjust deck height and ensure it doesn't exceed max-height
-    adjustDeckHeight(deck);
   }
 
   function adjustDeckHeight(deck) {
@@ -144,7 +124,7 @@
       const li = document.createElement('li');
       li.setAttribute('data-id', comment.id);
       li.innerHTML = `
-        <span>${comment.text}</span>
+        <span>comment text</span>
         <div class="comment-actions">
           <button class="edit-comment-btn">수정</button>
           <button class="delete-comment-btn">삭제</button>
