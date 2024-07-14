@@ -13,13 +13,12 @@ import com.sparta.trello.domain.user.adapter.UserAdapter;
 import com.sparta.trello.domain.user.entity.User;
 import com.sparta.trello.exception.custom.boardMember.detail.BoardMemberCodeEnum;
 import com.sparta.trello.exception.custom.boardMember.detail.BoardMemberDetailCustomException;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @RequiredArgsConstructor
 @Service
@@ -33,14 +32,14 @@ public class BoardService {
     @Transactional
     public BoardResponseDto createBoard(CreateBoardRequest request, User user) {
         Board board = Board.builder()
-                .title(request.getTitle())
-                .description(request.getDescription())
-                .build();
+            .title(request.getTitle())
+            .description(request.getDescription())
+            .build();
 
         BoardMember boardMember = BoardMember.builder()
-                .boardRole(BoardRole.MANAGER)
-                .user(user)
-                .board(board).build();
+            .boardRole(BoardRole.MANAGER)
+            .user(user)
+            .board(board).build();
         board = boardAdapter.save(board);
         boardMemberAdapter.save(boardMember);
 
@@ -51,7 +50,7 @@ public class BoardService {
     public void deleteBoard(Long boardId, User user) {
         Board board = boardAdapter.findById(boardId);
         BoardMember member = boardMemberAdapter.findByBoardAndUser(board, user);
-        boardMemberAdapter.validateBoardMember(member);
+        boardMemberAdapter.validateBoardManager(member);
         boardAdapter.delete(board);
     }
 
@@ -59,7 +58,7 @@ public class BoardService {
     public List<BoardResponseDto> getAllBoards(User user) {
         List<BoardMember> boardMember = boardMemberAdapter.findByUser(user);
         List<Board> boards = new ArrayList<>();
-        for(BoardMember member : boardMember) {
+        for (BoardMember member : boardMember) {
             boards.add(member.getBoard());
         }
         return boards.stream().map(BoardResponseDto::new).toList();
@@ -69,7 +68,7 @@ public class BoardService {
     public BoardResponseDto updateBoard(Long boardId, UpdateBoardRequest request, User user) {
         Board board = boardAdapter.findById(boardId);
         BoardMember member = boardMemberAdapter.findByBoardAndUser(board, user);
-        boardMemberAdapter.validateBoardMember(member);
+        boardMemberAdapter.validateBoardManager(member);
         board.update(request.getTitle(), request.getDescription());
 
         return new BoardResponseDto(board);
@@ -79,17 +78,17 @@ public class BoardService {
     public void inviteUser(InviteBoardRequestDto requestDto, Long boardId, User user) {
         Board board = boardAdapter.findById(boardId);
         BoardMember member = boardMemberAdapter.findByBoardAndUser(board, user);
-        boardMemberAdapter.validateBoardMember(member);
+        boardMemberAdapter.validateBoardManager(member);
 
         User inviteUser = userAdapter.findByUsername(requestDto.getUsername());
         BoardMember findUserMember = boardMemberAdapter.validateUserMember(board, inviteUser);
-        if(findUserMember != null) {
+        if (findUserMember != null) {
             throw new BoardMemberDetailCustomException(BoardMemberCodeEnum.BOARD_MEMBER_NOT_FOUND);
         }
         BoardMember manager = BoardMember.builder()
-                .boardRole(BoardRole.USER)
-                .user(inviteUser)
-                .board(board).build();
+            .boardRole(BoardRole.USER)
+            .user(inviteUser)
+            .board(board).build();
         boardMemberAdapter.save(manager);
     }
 }
