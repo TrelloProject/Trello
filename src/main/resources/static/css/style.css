@@ -22,7 +22,7 @@ body, div, ul, li {
 
 .deck {
   width: 340px;
-  max-height: calc(100vh - 7rem);
+  max-height: calc(100vh - 8rem);
   flex-shrink: 0;
   display: flex;
   flex-direction: column;

@@ -268,9 +268,9 @@
     $('#card-start-date').val('');
     $('#card-due-date').val('');
 
-    $('#addCardModal').data('deck-id', deckId).show();
+    $('#addCardModal').attr('data-deck-id', deckId).show();
   });
-  // 카드 저장
+  // 카드 저장 폼
   $('#addCardForm').on('submit', function(event) {
     event.preventDefault(); // 폼 기본 제출 막기
     const title = $('#card-title-input').val();
@@ -279,6 +279,7 @@
     const dueDate = $('#card-due-date').val();
 
     const mode = $('#addCardForm').attr('data-mode');
+    // 카드 추가
     if (mode === 'add') {
       const deckId = $('#addCardModal').attr('data-deck-id');
 
@@ -302,7 +303,9 @@
       .fail(function(xhr, status, er) {
         alert('카드 추가 실패');
       });
-    } else if (mode === 'edit') {
+    }
+    // 카드 수정
+    else if (mode === 'edit') {
       const cardId = $('#addCardForm').attr('data-card-id');
       alert(cardId);
 

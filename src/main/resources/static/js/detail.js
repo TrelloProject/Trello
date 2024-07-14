@@ -11,13 +11,13 @@
   const newComment = document.getElementById('new-comment');
   const addCommentBtn = document.getElementById('add-comment-btn');
   const closeBtns = document.querySelectorAll('.close-btn');
-  const cardEditBtn = document.getElementById('card-edit-btn');
-  const cardDeleteBtn = document.getElementById('card-delete-btn');
+  const cardEditBtn = document.getElementById('edit-card-btn');
+  const cardDeleteBtn = document.getElementById('delete-card-btn');
   const boardTitle = document.getElementById('board-title');
   const boardDescription = document.getElementById('board-description');
   const boardNameInput = document.getElementById('board-name-input');
   const boardDescriptionInput = document.getElementById('board-description-input');
-  let currentEditingCard = null; // To track which card is being edited
+  let currentEditingCard = null;
 
   const urlPath = window.location.pathname;
   const boardId = urlPath.substring(urlPath.lastIndexOf('/') + 1, urlPath.length);
@@ -43,8 +43,10 @@
 
       el.addEventListener('click', () => {
         showCardDetails(el);
-        currentEditingCard = el; // Set the current card being edited
+        currentEditingCard = el;
       });
+
+      el.addEventListener('dragover', handleScroll);
     });
   }
 
@@ -76,6 +78,8 @@
           }
         }
       });
+
+      deck.addEventListener('dragover', handleScroll);
     });
 
     board.addEventListener('dragover', e => {
@@ -95,6 +99,57 @@
       const draggingElements = document.querySelectorAll('.dragging');
       draggingElements.forEach(el => el.classList.remove('dragging'));
     });
+
+    board.addEventListener('dragover', handleScroll);
+  }
+
+  function handleScroll(event) {
+    const scrollMargin = 50; // 가장자리에 가까운 픽셀 수
+    const maxScrollSpeed = 20; // 최대 스크롤 속도
+
+    const rect = event.target.getBoundingClientRect();
+    const y = event.clientY;
+    const x = event.clientX;
+
+    if (y - rect.top < scrollMargin) {
+      window.scrollBy(0, -maxScrollSpeed);
+    } else if (rect.bottom - y < scrollMargin) {
+      window.scrollBy(0, maxScrollSpeed);
+    }
+
+    if (x - rect.left < scrollMargin) {
+      window.scrollBy(-maxScrollSpeed, 0);
+    } else if (rect.right - x < scrollMargin) {
+      window.scrollBy(maxScrollSpeed, 0);
+    }
+  }
+
+  function getDragAfterElement(container, y) {
+    const draggableElements = [...container.querySelectorAll('.draggable:not(.dragging)')];
+
+    return draggableElements.reduce((closest, child) => {
+      const box = child.getBoundingClientRect();
+      const offset = y - box.top - box.height / 2;
+      if (offset < 0 && offset > closest.offset) {
+        return { offset: offset, element: child };
+      } else {
+        return closest;
+      }
+    }, { offset: Number.NEGATIVE_INFINITY }).element;
+  }
+
+  function getDragAfterDeck(x) {
+    const deckElements = [...board.querySelectorAll('.deck:not(.dragging)')];
+
+    return deckElements.reduce((closest, child) => {
+      const box = child.getBoundingClientRect();
+      const offset = x - box.left - box.width / 2;
+      if (offset < 0 && offset > closest.offset) {
+        return { offset: offset, element: child };
+      } else {
+        return closest;
+      }
+    }, { offset: Number.NEGATIVE_INFINITY }).element;
   }
 
   function adjustDeckHeight(deck) {
@@ -195,7 +250,7 @@
   cardDeleteBtn.addEventListener('click', () => {
     if (currentEditingCard && confirm("Are you sure you want to delete this card?")) {
       currentEditingCard.parentNode.removeChild(currentEditingCard);
-      modal.style.display = 'none'; // Close the modal after deleting the card
+      modal.style.display = 'none';
     }
   });
 
