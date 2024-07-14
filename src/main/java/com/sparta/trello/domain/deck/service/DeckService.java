@@ -8,12 +8,11 @@ import com.sparta.trello.domain.deck.dto.DeckRequestDto;
 import com.sparta.trello.domain.deck.entity.Deck;
 import com.sparta.trello.domain.deck.repository.DeckAdapter;
 import com.sparta.trello.domain.user.entity.User;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -26,8 +25,9 @@ public class DeckService {
 
     /**
      * deck 생성
-     * @param user 로그인 유저
-     * @param boardId deck을 생성할 보드의 id
+     *
+     * @param user       로그인 유저
+     * @param boardId    deck을 생성할 보드의 id
      * @param requestDto 생성할 deck 정보
      */
     @Transactional
@@ -35,28 +35,27 @@ public class DeckService {
         Board board = boardAdapter.findById(boardId);
 
         BoardMember boardMember = boardMemberAdapter.findByBoardAndUser(board, user);
-        boardMemberAdapter.validateBoardMember(boardMember);
+        boardMemberAdapter.validateBoardManager(boardMember);
 
         Long deckCount = deckAdapter.findByCountBoardIdDeck(board);
 
-        if(deckCount.equals(0L)){
+        if (deckCount.equals(0L)) {
 
             Deck deck = Deck.builder()
-                    .title(requestDto.getTitle())
-                    .board(board)
-                    .build();
+                .title(requestDto.getTitle())
+                .board(board)
+                .build();
             deck = deckAdapter.save(deck);
 
             // 보드의 head_deck_id 업데이트
             board.updateHeadDeckId(deck.getId());
-        }
-        else{
+        } else {
             Deck prevDeck = deckAdapter.findByNextId(null);
 
             Deck deck = Deck.builder()
-                    .title(requestDto.getTitle())
-                    .board(board)
-                    .build();
+                .title(requestDto.getTitle())
+                .board(board)
+                .build();
             deck = deckAdapter.save(deck);
             prevDeck.updateNextId(deck.getId());
         }
@@ -64,28 +63,30 @@ public class DeckService {
 
     /**
      * deck 수정
-     * @param user 로그인 유저
-     * @param deckId 수정할 deck id
+     *
+     * @param user       로그인 유저
+     * @param deckId     수정할 deck id
      * @param requestDto 수정할 deck 정보
      */
     @Transactional
-    public void updateDeck(Long deckId, DeckRequestDto requestDto, User user){
+    public void updateDeck(Long deckId, DeckRequestDto requestDto, User user) {
         Deck deck = deckAdapter.findById(deckId);
         BoardMember boardMember = boardMemberAdapter.findByBoardAndUser(deck.getBoard(), user);
 
-        boardMemberAdapter.validateBoardMember(boardMember);
+        boardMemberAdapter.validateBoardManager(boardMember);
 
         deck.updateTitle(requestDto.getTitle());
     }
 
     /**
      * deck 삭제
-     * @param user 로그인 유저
+     *
+     * @param user   로그인 유저
      * @param deckId 삭제할 deck id
      */
     @Transactional
-    public void deleteDeck(Long deckId, User user){
-        Deck currentDeck = getDeckAndValidateUser(deckId, user);
+    public void deleteDeck(Long deckId, User user) {
+        Deck currentDeck = getDeckAndValidateBoardManager(deckId, user);
         Board board = currentDeck.getBoard();
 
         List<Deck> deckList = deckAdapter.findByBoard(board);
@@ -96,13 +97,14 @@ public class DeckService {
 
     /**
      * deck 이동
-     * @param user 로그인 유저
+     *
+     * @param user   로그인 유저
      * @param deckId 이동할 deck id
-     * @param index 이동할 position 위치
+     * @param index  이동할 position 위치
      */
     @Transactional
-    public void moveDeck(Long deckId, Long index, User user){
-        Deck currentDeck = getDeckAndValidateUser(deckId, user);
+    public void moveDeck(Long deckId, Long index, User user) {
+        Deck currentDeck = getDeckAndValidateBoardManager(deckId, user);
         Board board = currentDeck.getBoard();
 
         List<Deck> deckList = deckAdapter.findByBoard(board);
@@ -115,7 +117,8 @@ public class DeckService {
             board.updateHeadDeckId(currentDeck.getId());
         } else {
             // deck을 중간 또는 마지막 위치로 이동
-            Deck targetDeck = deckAdapter.findDeckAtIndex(deckList, index - 1, board.getHeadDeckId());
+            Deck targetDeck = deckAdapter.findDeckAtIndex(deckList, index - 1,
+                board.getHeadDeckId());
             currentDeck.updateNextId(targetDeck.getNextId());
             targetDeck.updateNextId(currentDeck.getId());
         }
@@ -124,16 +127,17 @@ public class DeckService {
 
     /**
      * 보드 권한 검증
+     *
      * @param deckId 검증이 필요한 deck id
-     * @param user 로그인 유저
+     * @param user   로그인 유저
      * @return 검증된 deck 반환
      */
-    private Deck getDeckAndValidateUser(Long deckId, User user) {
+    private Deck getDeckAndValidateBoardManager(Long deckId, User user) {
         Deck currentDeck = deckAdapter.findById(deckId);
         Board board = currentDeck.getBoard();
 
         BoardMember boardMember = boardMemberAdapter.findByBoardAndUser(board, user);
-        boardMemberAdapter.validateBoardMember(boardMember);
+        boardMemberAdapter.validateBoardManager(boardMember);
 
         return currentDeck;
     }
