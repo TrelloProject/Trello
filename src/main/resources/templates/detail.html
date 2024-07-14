@@ -13,6 +13,7 @@
 <h1 id="board-title" th:text="${board.getTitle()}">Board Name</h1>
 <p id="board-description" th:text="${board.getDescription()}">Board Description</p>
 <button id="inviteBoardBtn">보드 초대</button>
+<button id="grantBoardManagerBtn">권한 부여</button>
 <button id="addDeckBtn">덱 추가</button>
 <button id="editBoardBtn">보드 수정</button>
 <button id="deleteBoardBtn">보드 삭제</button>
@@ -115,7 +116,31 @@
         alert("초대 성공");
       })
       .fail(function(xhr, status, er) {
-        alert("보드 수정 실패");
+        alert("초대 실패");
+      });
+    }
+  });
+
+  $('#grantBoardManagerBtn').on('click', function () {
+    const newMember = prompt("매니저 권한을 줄 사용자 아이디");
+
+    const data = {
+      username: newMember,
+      boardId: boardId
+    }
+
+    if (newMember) {
+      $.ajax({
+        type: 'put',
+        url: '/users/role',
+        data: JSON.stringify(data),
+        contentType: "application/json;charset=utf-8"
+      })
+      .done(function(result, status, xhr) {
+        alert("권한 부여 성공");
+      })
+      .fail(function(xhr, status, er) {
+        alert("권한 부여 실패");
       });
     }
   });
