@@ -24,7 +24,7 @@ public class JwtLogoutHandler implements LogoutHandler {
     @Override
     public void logout(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
         log.info("로그아웃 시작");
-        String accessToken = jwtUtil.getAccessTokenFromHeader(request);
+        String accessToken = jwtUtil.getAccessTokenFromCookie(request);
         if (accessToken == null) {
             throw new JwtException(JwtCodeEnum.JWT_NOT_FOUND);
         }

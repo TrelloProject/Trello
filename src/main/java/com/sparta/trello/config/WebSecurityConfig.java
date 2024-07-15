@@ -82,7 +82,7 @@ public class WebSecurityConfig {
             authorizeHttpRequests
                 .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll() // resources 접근 허용 설정
                 .requestMatchers(HttpMethod.GET, "/").permitAll()
-                .requestMatchers(HttpMethod.GET, "/users/login", "/users/signup").permitAll()
+                .requestMatchers("/users/login", "/users/signup").permitAll()
                 .anyRequest().authenticated() // 그 외 모든 요청 인증처리
         );
 
@@ -100,7 +100,6 @@ public class WebSecurityConfig {
         http.logout(logout ->
             logout
                 .logoutUrl("/users/logout")
-//                .logoutSuccessUrl("") 로그아웃 성공했을 때 로그인 화면으로 이동
                 .addLogoutHandler(jwtLogoutHandler)
                 .logoutSuccessHandler(jwtLogoutSuccessHandler)
         );

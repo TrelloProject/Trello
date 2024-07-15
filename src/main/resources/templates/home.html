@@ -10,32 +10,13 @@
   <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 </head>
 <body>
-<button id="add-board-button">Add Board</button>
+<button id="add-board-button" style="margin: 30px;">Add Board</button>
+<button id="logout-button" style="margin: 30px;">Logout</button>
 <ul class="board-list">
   <li class="board-list-item" th:each="board : ${boards}">
     <a th:href="@{/boards/{boardId} (boardId=${board.getId()})}" class="board-title" th:text="${board.getTitle()}">Board Title</a>
     <p th:text="${board.getDescription()}">Board Description</p>
   </li>
-<!--  <li class="board-list-item">-->
-<!--    <a href="#" class="board-title">Board Title</a>-->
-<!--    <p>Board Description</p>-->
-<!--  </li>-->
-<!--  <li class="board-list-item">-->
-<!--    <a href="#" class="board-title">Board Title</a>-->
-<!--    <p>Board Description</p>-->
-<!--  </li>-->
-<!--  <li class="board-list-item">-->
-<!--    <a href="#" class="board-title">Board Title</a>-->
-<!--    <p>Board Description</p>-->
-<!--  </li>-->
-<!--  <li class="board-list-item">-->
-<!--    <a href="#" class="board-title">Board Title</a>-->
-<!--    <p>Board Description</p>-->
-<!--  </li>-->
-<!--  <li class="board-list-item">-->
-<!--    <a href="#" class="board-title">Board Title</a>-->
-<!--    <p>Board Description</p>-->
-<!--  </li>-->
 </ul>
 
 <div id="modal" class="modal">
@@ -52,6 +33,37 @@
 </div>
 
 <script>
+  function getCookie(name) {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return parts.pop().split(';').shift();
+    return null;
+  }
+  function deleteCookie(name) {
+    document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
+  }
+
+
+  const accessToken = getCookie('Authorization');
+  if(accessToken === undefined || accessToken === '') {
+    location.href = '/user/login';
+  }
+
+  // 로그아웃
+  $('#logout-button').on('click', function () {
+    $.ajax({
+      type: 'post',
+      url: '/users/logout'
+    })
+    .done(function(result, status, xhr) {
+      deleteCookie(accessToken);
+      location.replace('/users/login');
+    })
+    .fail(function(xhr, status, er) {
+      console.log("로그아웃 실패");
+    });
+  });
+
   $('#add-board-button').click(function() {
     $('#modal').css('display', 'block');
   });

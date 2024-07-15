@@ -33,11 +33,11 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
     private final UserAdapter userAdapter;
 
     private final List<String> getMethodWhiteList = List.of(
-        "/users/login", "/users/signup"
+        "/users/login"
     );
 
     private final List<String> anyMethodWhiteList = List.of(
-        "/api/users/login"
+        "/api/users/login", "/users/signup"
     );
 
 //    @Override
@@ -80,7 +80,9 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
                 }
             } else {
                 log.error("DB에 refresh 토큰 없음. 로그인부터 해야 됨");
-                throw new JwtAlreadyRemoveException(JwtCodeEnum.JWT_NOT_FOUND);
+                response.sendRedirect("/users/login");
+                return;
+//                throw new JwtAlreadyRemoveException(JwtCodeEnum.JWT_NOT_FOUND);
             }
         } else {
             log.error("access 토큰 검증 실패, refresh 토큰 검증 시작");
@@ -97,7 +99,8 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
                 }
             } else {
                 log.error("access 토큰 없음. 로그인부터 해야 됨");
-                throw new JwtAlreadyRemoveException(JwtCodeEnum.JWT_NOT_FOUND);
+                request.getRequestDispatcher("/users/login").forward(request, response);
+                return;
             }
         }
 

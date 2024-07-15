@@ -22,12 +22,13 @@
       <input type="password" id="password" name="password" required>
 
       <button type="button" id="btnLogin">Login</button>
+      <button type="button" id="btnSignup" onclick="location.href='/users/signup'">Sign Up</button>
     </form>
   </div>
 </div>
 
 <script>
-  $('#authForm').on('click', '#btnLogin', function () {
+  $('#btnLogin').on('click', function () {
     const username = $('#username').val();
     const password = $('#password').val();
 

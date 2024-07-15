@@ -33,6 +33,11 @@ public class UserController {
         return "login";
     }
 
+    @GetMapping("/signup")
+    public String signup() {
+        return "signup";
+    }
+
     @PostMapping("/signup")
     public ResponseEntity<MessageResponseDto> signup(
         @Valid @RequestBody SignupRequestDto requestDto

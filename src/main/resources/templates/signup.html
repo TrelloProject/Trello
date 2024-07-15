@@ -40,18 +40,18 @@
       password: password,
       name: name
     };
-    console.log(data);
 
-    // $.ajax({
-    //   type: 'post',
-    //   url: '',
-    //   data: JSON.stringify(data),
-    //   contentType: "application/json;charset=utf-8"
-    // })
-    // .done(function(result, status, xhr) {
-    // })
-    // .fail(function(xhr, status, er) {
-    // });
+    $.ajax({
+      type: 'post',
+      url: '/users/signup',
+      data: JSON.stringify(data),
+      contentType: "application/json;charset=utf-8"
+    })
+    .done(function(result, status, xhr) {
+      location.replace('/users/login');
+    })
+    .fail(function(xhr, status, er) {
+    });
   });
 </script>
 

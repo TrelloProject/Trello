@@ -171,14 +171,6 @@ li.draggable:last-child {
   margin: 10px 0 0 0;
 }
 
-#add-board-button {
-  display: block;
-  margin: 20px auto;
-  padding: 10px 20px;
-  font-size: 16px;
-  cursor: pointer;
-}
-
 .modal {
   display: none;
   position: fixed;

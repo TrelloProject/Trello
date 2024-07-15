@@ -17,6 +17,7 @@
 <button id="addDeckBtn">덱 추가</button>
 <button id="editBoardBtn">보드 수정</button>
 <button id="deleteBoardBtn">보드 삭제</button>
+<button id="logout-button">로그아웃</button>
 <div id="board">
   <div class="deck" draggable="true" data-id="1"
        th:data-id="${items.getDeck().getId()}" th:each="items : ${board.getBoardItems()}">
@@ -98,7 +99,37 @@
   </div>
 </div>
 
+<script>
+  function getCookie(name) {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return parts.pop().split(';').shift();
+    return null;
+  }
+  function deleteCookie(name) {
+    document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
+  }
 
+  const accessToken = getCookie('Authorization');
+  if(accessToken === undefined || accessToken === '') {
+    location.href = '/user/login';
+  }
+
+  // 로그아웃
+  $('#logout-button').on('click', function () {
+    $.ajax({
+      type: 'post',
+      url: '/users/logout'
+    })
+    .done(function(result, status, xhr) {
+      deleteCookie(accessToken);
+      location.replace('/users/login');
+    })
+    .fail(function(xhr, status, er) {
+      console.log("로그아웃 실패");
+    });
+  });
+</script>
 <script th:src="@{/js/detail.js}"></script>
 <script>
   const urlPath = window.location.pathname;
@@ -123,6 +154,20 @@
     })
     .done(function (result, status, xhr) {
       location.replace(location.href);
+    })
+    .fail(function (xhr, status, er) {
+      alert("보드 수정 실패");
+    });
+  });
+
+  // 보드 삭제
+  $('#deleteBoardBtn').on('click', function () {
+    $.ajax({
+      type: 'delete',
+      url: '/boards/' + boardId
+    })
+    .done(function (result, status, xhr) {
+      location.replace('/');
     })
     .fail(function (xhr, status, er) {
       alert("보드 수정 실패");
