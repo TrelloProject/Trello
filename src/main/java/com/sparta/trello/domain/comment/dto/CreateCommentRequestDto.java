@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 public class CreateCommentRequestDto {
 
     @NotNull(message = "카드 ID를 입력해야 합니다.")
-    private Long cardId;
+    private long cardId;
 
     @NotBlank(message = "댓글 내용을 입력해야 합니다.")
     private String content;

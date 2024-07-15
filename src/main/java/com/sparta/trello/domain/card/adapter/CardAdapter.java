@@ -39,7 +39,11 @@ public class CardAdapter {
     }
 
     public Optional<Card> findLastCardByDeckId(Long deckId) {
-        return cardRepository.findTopByDeckIdOrderByIdDesc(deckId);
+        List<Card> sortedCards = getSortedCards(deckId);
+        if (sortedCards.isEmpty()) {
+            return Optional.empty();
+        }
+        return Optional.of(sortedCards.get(sortedCards.size() - 1));
     }
 
     public Card findCardByNextId(Long cardId) {
@@ -51,11 +55,17 @@ public class CardAdapter {
     }
 
     public Card findCardByDeckIdAndIndex(Long deckId, int index) {
-        List<Card> cards = findAllByDeckId(deckId);
+        List<Card> sortedCards = getSortedCards(deckId);
 
-        if (cards.isEmpty()) {
-            throw new DeckDetailCustomException(DeckCodeEnum.DECK_NOT_FOUND);
+        if (index < 0 || index >= sortedCards.size()) {
+            throw new CardIndexOutOfBoundsException(CardCodeEnum.CARD_INDEX_OUT_OF_BOUNDS_ERROR);
         }
+
+        return sortedCards.get(index);
+    }
+
+    private List<Card> getSortedCards(Long deckId) {
+        List<Card> cards = findAllByDeckId(deckId);
 
         Map<Long, Card> cardMap = cards.stream()
             .collect(Collectors.toMap(Card::getId, card -> card));
@@ -74,10 +84,6 @@ public class CardAdapter {
             currCard = cardMap.get(currCard.getNextId());
         }
 
-        if (index < 0 || index >= sortedCards.size()) {
-            throw new CardIndexOutOfBoundsException(CardCodeEnum.CARD_INDEX_OUT_OF_BOUNDS_ERROR);
-        }
-
-        return sortedCards.get(index);
+        return sortedCards;
     }
 }

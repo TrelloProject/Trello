@@ -33,8 +33,8 @@ public class BoardMemberAdapter {
 
     }
 
-    public List<BoardMember> findByTwoBoardMember(List<Long> boardId) {
-        return boardMemberRepository.findByTwoBoardMember(boardId);
+    public List<BoardMember> findByBoardIdTwoBoardMember(Long boardId, List<Long> usersId) {
+        return boardMemberRepository.findByBoardIdTwoBoardMember(boardId, usersId);
     }
 
     public List<BoardMember> findByUser(User user) {
