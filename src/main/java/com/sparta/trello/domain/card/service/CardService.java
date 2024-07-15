@@ -9,8 +9,8 @@ import com.sparta.trello.domain.card.dto.CreateCardRequestDto;
 import com.sparta.trello.domain.card.dto.MoveCardRequestDto;
 import com.sparta.trello.domain.card.dto.UpdateCardRequestDto;
 import com.sparta.trello.domain.card.entity.Card;
+import com.sparta.trello.domain.comment.adapter.CommentAdapter;
 import com.sparta.trello.domain.comment.entity.Comment;
-import com.sparta.trello.domain.comment.repository.CommentAdapter;
 import com.sparta.trello.domain.deck.entity.Deck;
 import com.sparta.trello.domain.deck.repository.DeckAdapter;
 import com.sparta.trello.domain.user.entity.User;
@@ -36,9 +36,7 @@ public class CardService {
         Deck deck = deckAdapter.findById(createCardRequestDto.getDeckId());
 
         // 보드 멤버 검증
-        Board board = deck.getBoard();
-        BoardMember boardMember = boardMemberAdapter.findByBoardAndUser(board, user);
-        boardMemberAdapter.validateBoardMember(boardMember);
+        validateBoardMemberByDeckAndUser(deck, user);
 
         // 덱에서 가장 마지막 카드 조회
         Optional<Card> lastCardOpt = cardAdapter.findLastCardByDeckId(deck.getId());
@@ -73,9 +71,7 @@ public class CardService {
         Card card = cardAdapter.findById(cardId);
 
         // 보드 멤버 검증
-        Board board = card.getDeck().getBoard();
-        BoardMember boardMember = boardMemberAdapter.findByBoardAndUser(board, user);
-        boardMemberAdapter.validateBoardMember(boardMember);
+        validateBoardMemberByCardAndUser(card, user);
 
         List<Comment> comments = commentAdapter.findByCardId(cardId);
 //        cardAdapter.validateCardOwnership(card, user);
@@ -87,9 +83,7 @@ public class CardService {
         Card card = cardAdapter.findById(cardId);
 
         // 보드 멤버 검증
-        Board board = card.getDeck().getBoard();
-        BoardMember boardMember = boardMemberAdapter.findByBoardAndUser(board, user);
-        boardMemberAdapter.validateBoardMember(boardMember);
+        validateBoardMemberByCardAndUser(card, user);
 
         card.update(updateCardRequestDto);
         cardAdapter.save(card);
@@ -101,10 +95,7 @@ public class CardService {
         Card card = cardAdapter.findById(cardId);
 
         // 보드 멤버 검증
-        Board board = card.getDeck().getBoard();
-        BoardMember boardMember = boardMemberAdapter.findByBoardAndUser(board, user);
-        boardMemberAdapter.validateBoardMember(boardMember);
-
+        validateBoardMemberByCardAndUser(card, user);
         // 현재 덱
         Deck currDeck = card.getDeck();
         // 이동할 덱
@@ -152,9 +143,7 @@ public class CardService {
         Card card = cardAdapter.findById(cardId);
 
         // 보드 멤버 검증
-        Board board = card.getDeck().getBoard();
-        BoardMember boardMember = boardMemberAdapter.findByBoardAndUser(board, user);
-        boardMemberAdapter.validateBoardMember(boardMember);
+        validateBoardMemberByCardAndUser(card, user);
 
         Deck deck = card.getDeck();
         if (deck.getHeadCardId().equals(cardId)) {
@@ -170,5 +159,17 @@ public class CardService {
         }
         cardAdapter.delete(card);
         log.info("Card deleted with id: {}", cardId);
+    }
+
+    private void validateBoardMemberByDeckAndUser(Deck deck, User user) {
+        Board board = deck.getBoard();
+        BoardMember boardMember = boardMemberAdapter.findByBoardAndUser(board, user);
+        boardMemberAdapter.validateBoardMember(boardMember);
+    }
+
+    private void validateBoardMemberByCardAndUser(Card card, User user) {
+        Board board = card.getDeck().getBoard();
+        BoardMember boardMember = boardMemberAdapter.findByBoardAndUser(board, user);
+        boardMemberAdapter.validateBoardMember(boardMember);
     }
 }
