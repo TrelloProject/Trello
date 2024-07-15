@@ -76,7 +76,7 @@ public class CardService {
         Board board = card.getDeck().getBoard();
         BoardMember boardMember = boardMemberAdapter.findByBoardAndUser(board, user);
         boardMemberAdapter.validateBoardMember(boardMember);
-        return card;
+
         List<Comment> comments = commentAdapter.findByCardId(cardId);
 //        cardAdapter.validateCardOwnership(card, user);
         return new CardResponseDto(card, comments);

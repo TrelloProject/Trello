@@ -69,7 +69,8 @@
     <label for="board-name-input">Board Name</label>
     <input type="text" id="board-name-input" th:text="${board.getTitle()}">
     <label for="board-description-input">Board Description</label>
-    <textarea id="board-description-input" th:text="${board.getDescription()}">Board Description</textarea>
+    <textarea id="board-description-input"
+              th:text="${board.getDescription()}">Board Description</textarea>
     <button id="save-board-btn" class="bottom-button-design">Save</button>
   </div>
 </div>
@@ -98,7 +99,6 @@
 </div>
 
 
-
 <script th:src="@{/js/detail.js}"></script>
 <script>
   const urlPath = window.location.pathname;
@@ -121,10 +121,10 @@
       data: JSON.stringify(data),
       contentType: "application/json;charset=utf-8"
     })
-    .done(function(result, status, xhr) {
+    .done(function (result, status, xhr) {
       location.replace(location.href);
     })
-    .fail(function(xhr, status, er) {
+    .fail(function (xhr, status, er) {
       alert("보드 수정 실패");
     });
   });
@@ -144,10 +144,10 @@
         data: JSON.stringify(data),
         contentType: "application/json;charset=utf-8"
       })
-      .done(function(result, status, xhr) {
+      .done(function (result, status, xhr) {
         alert("초대 성공");
       })
-      .fail(function(xhr, status, er) {
+      .fail(function (xhr, status, er) {
         alert("초대 실패");
       });
     }
@@ -169,10 +169,10 @@
         data: JSON.stringify(data),
         contentType: "application/json;charset=utf-8"
       })
-      .done(function(result, status, xhr) {
+      .done(function (result, status, xhr) {
         alert("권한 부여 성공");
       })
-      .fail(function(xhr, status, er) {
+      .fail(function (xhr, status, er) {
         alert("권한 부여 실패");
       });
     }
@@ -195,16 +195,16 @@
       data: JSON.stringify(data),
       contentType: "application/json;charset=utf-8"
     })
-    .done(function(result, status, xhr) {
+    .done(function (result, status, xhr) {
       location.replace(location.href);
     })
-    .fail(function(xhr, status, er) {
+    .fail(function (xhr, status, er) {
       alert("덱 생성 실패");
     });
   });
 
   // 덱 수정
-  $('.deck').on('click', '.editBtn', function() {
+  $('.deck').on('click', '.editBtn', function () {
     const deck = $(this).closest('.deck');
     const deckTitle = deck.find('h2').text();
 
@@ -224,16 +224,16 @@
       data: JSON.stringify(data),
       contentType: "application/json;charset=utf-8"
     })
-    .done(function(result, status, xhr) {
+    .done(function (result, status, xhr) {
       location.replace(location.href);
     })
-    .fail(function(xhr, status, er) {
+    .fail(function (xhr, status, er) {
       alert("덱 수정 실패");
     });
   });
 
   // 덱 삭제
-  $('.deck').on('click', '.deleteBtn', function() {
+  $('.deck').on('click', '.deleteBtn', function () {
     const deck = $(this).closest('.deck');
 
     if (confirm('현재 덱을 삭제하시겠습니까?')) {
@@ -242,10 +242,10 @@
         type: 'delete',
         url: '/decks/' + deckId
       })
-      .done(function(result, status, xhr) {
+      .done(function (result, status, xhr) {
         deck.remove();
       })
-      .fail(function(xhr, status, er) {
+      .fail(function (xhr, status, er) {
         alert("덱 삭제 실패");
       });
     }
@@ -271,7 +271,7 @@
     $('#addCardModal').attr('data-deck-id', deckId).show();
   });
   // 카드 저장 폼
-  $('#addCardForm').on('submit', function(event) {
+  $('#addCardForm').on('submit', function (event) {
     event.preventDefault(); // 폼 기본 제출 막기
     const title = $('#card-title-input').val();
     const description = $('#card-description-input').val();
@@ -297,10 +297,10 @@
         contentType: 'application/json;charset=utf-8',
         data: JSON.stringify(data)
       })
-      .done(function(result, status, xhr) {
+      .done(function (result, status, xhr) {
         location.replace(location.href);
       })
-      .fail(function(xhr, status, er) {
+      .fail(function (xhr, status, er) {
         alert('카드 추가 실패');
       });
     }
@@ -321,10 +321,10 @@
         contentType: 'application/json;charset=utf-8',
         data: JSON.stringify(data)
       })
-      .done(function(result, status, xhr) {
+      .done(function (result, status, xhr) {
         location.replace(location.href);
       })
-      .fail(function(xhr, status, er) {
+      .fail(function (xhr, status, er) {
         alert('카드 수정 실패');
       });
     }
@@ -381,7 +381,7 @@
       type: 'get',
       url: '/cards/' + cardId
     })
-    .done(function(result, status, xhr) {
+    .done(function (result, status, xhr) {
       // 카드 내용
       $('#modal-title').text(result.title);
       $('#modal-description').text(result.description);
@@ -391,7 +391,7 @@
       // 댓글 내용
       const commentList = $('#comment-list');
       commentList.empty(); // 기존 댓글 목록을 비우기
-      result.comments.forEach(function(comment) {
+      result.comments.forEach(function (comment) {
         commentList.append(`
         <li data-comment-id="${comment.id}">
           <span>${comment.content}</span>
@@ -405,7 +405,7 @@
 
       $('#modal').attr('data-id', cardId).show();
     })
-    .fail(function(xhr, status, er) {
+    .fail(function (xhr, status, er) {
       alert('카드 단일 조회 실패');
     });
   });
@@ -419,10 +419,10 @@
         type: 'delete',
         url: '/cards/' + cardId
       })
-      .done(function(result, status, xhr) {
+      .done(function (result, status, xhr) {
         location.replace(location.href);
       })
-      .fail(function(xhr, status, er) {
+      .fail(function (xhr, status, er) {
         alert('카드 삭제 실패');
       });
     }
@@ -449,7 +449,7 @@
       contentType: 'application/json;charset=utf-8',
       data: JSON.stringify(data)
     })
-    .done(function(result, status, xhr) {
+    .done(function (result, status, xhr) {
       const commentList = $('#comment-list');
       commentList.append(`
         <li data-comment-id="${result.data.id}">
@@ -463,7 +463,7 @@
       $('#new-comment').val(''); // 입력 필드 초기화
       alert('댓글 등록 성공');
     })
-    .fail(function(xhr, status, er) {
+    .fail(function (xhr, status, er) {
       alert('댓글 추가 실패');
     });
   });
@@ -489,11 +489,11 @@
       contentType: 'application/json;charset=utf-8',
       data: JSON.stringify(data)
     })
-    .done(function(result, status, xhr) {
+    .done(function (result, status, xhr) {
       commentItem.find('span').text(`${result.data.content}`);
       alert('댓글 수정 성공');
     })
-    .fail(function(xhr, status, er) {
+    .fail(function (xhr, status, er) {
       alert('댓글 수정 실패');
     });
   });
@@ -508,11 +508,11 @@
         type: 'delete',
         url: '/comments/' + commentId
       })
-      .done(function(result, status, xhr) {
+      .done(function (result, status, xhr) {
         commentItem.remove();
         alert('댓글 삭제 성공');
       })
-      .fail(function(xhr, status, er) {
+      .fail(function (xhr, status, er) {
         alert('댓글 삭제 실패');
       });
     }

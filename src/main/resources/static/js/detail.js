@@ -114,7 +114,12 @@
         console.log('덱 위치 변경 성공');
       },
       error: function(xhr, status, error) {
-        console.error('덱 위치 변경 실패:', error);
+        if (status) {
+          alert(status.message);
+        } else {
+          console.error('덱 위치 변경 실패:', error);
+          alert('덱 위치 변경 실패');
+        }
       }
     });
   }
@@ -134,7 +139,12 @@
         console.log('카드 위치 변경 성공');
       },
       error: function(xhr, status, error) {
-        console.error('카드 위치 변경 실패:', error);
+        if (status) {
+          alert(status.message);
+        } else {
+          console.error('카드 위치 변경 실패:', error);
+          alert('카드 위치 변경 실패');
+        }
       }
     });
   }

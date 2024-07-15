@@ -18,12 +18,13 @@ public class BoardMemberQueryRepositoryImpl implements BoardMemberQueryRepositor
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public List<BoardMember> findByTwoBoardMember(List<Long> userIds) {
+    public List<BoardMember> findByBoardIdTwoBoardMember(Long boardId, List<Long> userIds) {
         QBoardMember qBoardMember = QBoardMember.boardMember;
         QUser qUser = QUser.user;
 
         return queryFactory.selectFrom(qBoardMember)
             .where(qUser.id.in(userIds))
+            .where(qBoardMember.board.id.eq(boardId))
             .fetch();
     }
 

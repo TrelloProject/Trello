@@ -67,10 +67,6 @@ public class CardAdapter {
     private List<Card> getSortedCards(Long deckId) {
         List<Card> cards = findAllByDeckId(deckId);
 
-        if (cards.isEmpty()) {
-            throw new DeckDetailCustomException(DeckCodeEnum.DECK_NOT_FOUND);
-        }
-
         Map<Long, Card> cardMap = cards.stream()
             .collect(Collectors.toMap(Card::getId, card -> card));
 
