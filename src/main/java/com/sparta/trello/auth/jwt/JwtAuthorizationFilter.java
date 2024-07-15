@@ -13,6 +13,8 @@ import java.io.IOException;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
+import org.springframework.boot.autoconfigure.security.servlet.StaticResourceRequest.StaticResourceRequestMatcher;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -31,11 +33,18 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
     private final UserAdapter userAdapter;
 
     private final List<String> getMethodWhiteList = List.of(
+        "/users/login", "/users/signup"
     );
 
     private final List<String> anyMethodWhiteList = List.of(
-        "/users/login", "/users/signup"
+        "/api/users/login"
     );
+
+//    @Override
+//    protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
+//        String uri = request.getRequestURI();
+//        return anyMethodWhiteList.stream().anyMatch(uri::startsWith);
+//    }
 
     @Override
     protected void doFilterInternal(
@@ -45,7 +54,10 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
         String method = request.getMethod();
 
         // 어떤 요청이든 인증을 요구하지 않음
-        if (anyMethodWhiteList.stream().anyMatch(uri::startsWith)) {
+        log.info("uri: {}, method: {}", uri, method);
+        if (anyMethodWhiteList.stream().anyMatch(uri::startsWith)
+            || PathRequest.toStaticResources().atCommonLocations().matches(request)
+        ) {
             filterChain.doFilter(request, response);
             return;
         }
@@ -55,7 +67,8 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
             return;
         }
 
-        String accessToken = jwtUtil.getAccessTokenFromHeader(request);
+        String accessToken = jwtUtil.getAccessTokenFromCookie(request);
+//        String accessToken = jwtUtil.getAccessTokenFromHeader(request);
         if (StringUtils.hasText(accessToken) && jwtUtil.validateToken(accessToken)) {
             String username = jwtUtil.getUserInfoFromToken(accessToken).getSubject();
             User findUser = userAdapter.findByUsername(username);
@@ -63,7 +76,6 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
             if (findUser.getRefreshToken() != null) {
                 String refreshToken = findUser.getRefreshToken().substring(JwtUtil.BEARER_PREFIX.length());
                 if (StringUtils.hasText(refreshToken) && jwtUtil.validateToken(refreshToken)) {
-                    log.info("Context Holder 에 담기");
                     setAuthentication(findUser.getUsername());
                 }
             } else {

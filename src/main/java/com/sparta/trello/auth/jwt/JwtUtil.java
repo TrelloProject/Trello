@@ -12,10 +12,15 @@ import io.jsonwebtoken.SignatureException;
 import io.jsonwebtoken.UnsupportedJwtException;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.util.Base64;
 import java.util.Date;
+import java.util.Enumeration;
+import java.util.Set;
 import java.util.UUID;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -32,8 +37,8 @@ public class JwtUtil {
     // Token 식별자
     public static final String BEARER_PREFIX = "Bearer ";
     // 토큰 만료시간
-    private final long ACCESS_TOKEN_TIME = 30 * 60 * 1000L; // 30분
-    private final long REFRESH_TOKEN_TIME = 1000 * 60 * 60 * 24 * 14; // 2주
+    public static final long ACCESS_TOKEN_TIME = 30 * 60 * 1000L; // 30분
+    public static final long REFRESH_TOKEN_TIME = 1000 * 60 * 60 * 24 * 14; // 2주
 
     @Value("${jwt-secret-key}") // Base64 Encode 한 SecretKey
     private String secretKey;
@@ -79,14 +84,34 @@ public class JwtUtil {
     // header 에서 access token 가져오기
     public String getAccessTokenFromHeader(HttpServletRequest request) {
         String bearerToken = request.getHeader(ACCESS_TOKEN_HEADER);
+        log.info("Bearer token: {}", bearerToken);
         if (StringUtils.hasText(bearerToken) && bearerToken.startsWith(BEARER_PREFIX)) {
-            return bearerToken.substring(7);
+            String replace = bearerToken.replace("%20", " ");
+            return replace.substring(BEARER_PREFIX.length());
+        }
+        return null;
+    }
+
+    // 쿠키에서 access token 가져오기
+    public String getAccessTokenFromCookie(HttpServletRequest request) {
+        Cookie[] cookies = request.getCookies();
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if (ACCESS_TOKEN_HEADER.equals(cookie.getName())) {
+                    String replace = cookie.getValue().replace("%20", " ");
+                    if (replace.startsWith(BEARER_PREFIX)) {
+                        replace = replace.substring(BEARER_PREFIX.length());
+                    }
+                    return URLDecoder.decode(replace, StandardCharsets.UTF_8);
+                }
+            }
         }
         return null;
     }
 
     // 토큰 검증
     public boolean validateToken(String token) {
+        token = token.replace("%20", " ");
         try {
             Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
             return true;

@@ -53,7 +53,8 @@ public class UserService {
             throw new BoardMemberDetailCustomException(BoardMemberCodeEnum.CANNOT_GRANT_PERMISSION_TO_SELF);
         }
 
-        List<BoardMember> twoBoardMember = boardMemberAdapter.findByTwoBoardMember(
+        List<BoardMember> twoBoardMember = boardMemberAdapter.findByBoardIdTwoBoardMember(
+            grantBoardRoleDto.getBoardId(),
             List.of(loginUser.getId(), grantUser.getId())
         );
         BoardMember manager = null, user = null;
@@ -74,8 +75,10 @@ public class UserService {
             throw new BoardMemberDetailCustomException(BoardMemberCodeEnum.BOARD_MEMBER_FORBIDDEN);
         }
 
-        if (Objects.equals(manager.getBoardRole(), BoardRole.MANAGER)) {
-            user.grantBoardManager();
+        if (!Objects.equals(manager.getBoardRole(), BoardRole.MANAGER)) {
+            throw new BoardMemberDetailCustomException(BoardMemberCodeEnum.BOARD_MEMBER_FORBIDDEN);
         }
+
+        user.grantBoardManager();
     }
 }

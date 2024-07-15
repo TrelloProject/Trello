@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>trello</title>
+  <link rel="stylesheet" th:href="@{/css/reset.css}">
+  <link rel="stylesheet" th:href="@{/css/style.css}">
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+</head>
+<body>
+<button id="add-board-button">Add Board</button>
+<ul class="board-list">
+  <li class="board-list-item" th:each="board : ${boards}">
+    <a th:href="@{/boards/{boardId} (boardId=${board.getId()})}" class="board-title" th:text="${board.getTitle()}">Board Title</a>
+    <p th:text="${board.getDescription()}">Board Description</p>
+  </li>
+<!--  <li class="board-list-item">-->
+<!--    <a href="#" class="board-title">Board Title</a>-->
+<!--    <p>Board Description</p>-->
+<!--  </li>-->
+<!--  <li class="board-list-item">-->
+<!--    <a href="#" class="board-title">Board Title</a>-->
+<!--    <p>Board Description</p>-->
+<!--  </li>-->
+<!--  <li class="board-list-item">-->
+<!--    <a href="#" class="board-title">Board Title</a>-->
+<!--    <p>Board Description</p>-->
+<!--  </li>-->
+<!--  <li class="board-list-item">-->
+<!--    <a href="#" class="board-title">Board Title</a>-->
+<!--    <p>Board Description</p>-->
+<!--  </li>-->
+<!--  <li class="board-list-item">-->
+<!--    <a href="#" class="board-title">Board Title</a>-->
+<!--    <p>Board Description</p>-->
+<!--  </li>-->
+</ul>
+
+<div id="modal" class="modal">
+  <div class="modal-content">
+    <label for="modal-title">제목</label>
+    <input type="text" id="modal-title">
+    <label for="modal-description">설명</label>
+    <textarea id="modal-description"></textarea>
+    <div class="modal-buttons">
+      <button id="confirm-button">확인</button>
+      <button id="cancel-button">취소</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  $('#add-board-button').click(function() {
+    $('#modal').css('display', 'block');
+  });
+
+  $('#confirm-button').click(function() {
+    const boardTitle = $('#modal-title').val();
+    const boardDescription = $('#modal-description').val();
+
+    if (!boardTitle || !boardDescription) {
+      alert("둘다 입력하세요.");
+      return;
+    }
+
+    const data = {
+      title: boardTitle,
+      description: boardDescription
+    }
+
+    console.log(data);
+
+    $.ajax({
+      type: 'post',
+      url: '/boards',
+      data: JSON.stringify(data),
+      contentType: "application/json;charset=utf-8"
+    })
+    .done(function(result, status, xhr) {
+      location.replace(location.href);
+    })
+    .fail(function(xhr, status, er) {
+      console.log("보드 생성 실패");
+    })
+    .always(function () {
+      $('#modal').css('display', 'none');
+      $('#modal-title').val('');
+      $('#modal-description').val('');
+    });
+  });
+
+  $('#cancel-button').click(function() {
+    $('#modal').css('display', 'none');
+    $('#modal-title').val('');
+    $('#modal-description').val('');
+  });
+</script>
+</body>
+</html>

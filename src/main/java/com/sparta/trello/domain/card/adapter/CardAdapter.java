@@ -3,10 +3,8 @@ package com.sparta.trello.domain.card.adapter;
 import com.sparta.trello.domain.card.entity.Card;
 import com.sparta.trello.domain.card.repository.CardRepository;
 import com.sparta.trello.domain.deck.repository.DeckRepository;
-import com.sparta.trello.domain.user.entity.User;
 import com.sparta.trello.exception.custom.card.CardCodeEnum;
 import com.sparta.trello.exception.custom.card.detail.CardIndexOutOfBoundsException;
-import com.sparta.trello.exception.custom.card.detail.CardNoPermissionException;
 import com.sparta.trello.exception.custom.card.detail.CardNotFoundException;
 import com.sparta.trello.exception.custom.deck.detail.DeckCodeEnum;
 import com.sparta.trello.exception.custom.deck.detail.DeckDetailCustomException;
@@ -33,12 +31,6 @@ public class CardAdapter {
 
     public void delete(Card card) {
         cardRepository.delete(card);
-    }
-
-    public void validateCardOwnership(Card card, User user) {
-        if (!card.getUser().getId().equals(user.getId())) {
-            throw new CardNoPermissionException(CardCodeEnum.CARD_NO_PERMISSION);
-        }
     }
 
     public Card findById(Long cardId) {
@@ -74,10 +66,6 @@ public class CardAdapter {
 
     private List<Card> getSortedCards(Long deckId) {
         List<Card> cards = findAllByDeckId(deckId);
-
-        if (cards.isEmpty()) {
-            throw new DeckDetailCustomException(DeckCodeEnum.DECK_NOT_FOUND);
-        }
 
         Map<Long, Card> cardMap = cards.stream()
             .collect(Collectors.toMap(Card::getId, card -> card));

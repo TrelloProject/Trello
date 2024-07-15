@@ -1,13 +1,20 @@
 package com.sparta.trello.domain.card.service;
 
+import com.sparta.trello.domain.board.entity.Board;
+import com.sparta.trello.domain.boardMember.entity.BoardMember;
+import com.sparta.trello.domain.boardMember.repository.BoardMemberAdapter;
 import com.sparta.trello.domain.card.adapter.CardAdapter;
+import com.sparta.trello.domain.card.dto.CardResponseDto;
 import com.sparta.trello.domain.card.dto.CreateCardRequestDto;
 import com.sparta.trello.domain.card.dto.MoveCardRequestDto;
 import com.sparta.trello.domain.card.dto.UpdateCardRequestDto;
 import com.sparta.trello.domain.card.entity.Card;
+import com.sparta.trello.domain.comment.entity.Comment;
+import com.sparta.trello.domain.comment.repository.CommentAdapter;
 import com.sparta.trello.domain.deck.entity.Deck;
 import com.sparta.trello.domain.deck.repository.DeckAdapter;
 import com.sparta.trello.domain.user.entity.User;
+import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,10 +28,17 @@ public class CardService {
 
     private final CardAdapter cardAdapter;
     private final DeckAdapter deckAdapter;
+    private final CommentAdapter commentAdapter;
+    private final BoardMemberAdapter boardMemberAdapter;
 
     @Transactional
     public void createCard(CreateCardRequestDto createCardRequestDto, User user) {
         Deck deck = deckAdapter.findById(createCardRequestDto.getDeckId());
+
+        // 보드 멤버 검증
+        Board board = deck.getBoard();
+        BoardMember boardMember = boardMemberAdapter.findByBoardAndUser(board, user);
+        boardMemberAdapter.validateBoardMember(boardMember);
 
         // 덱에서 가장 마지막 카드 조회
         Optional<Card> lastCardOpt = cardAdapter.findLastCardByDeckId(deck.getId());
@@ -55,16 +69,28 @@ public class CardService {
     }
 
     @Transactional(readOnly = true)
-    public Card getCard(Long cardId, User user) {
+    public CardResponseDto getCard(Long cardId, User user) {
         Card card = cardAdapter.findById(cardId);
-        cardAdapter.validateCardOwnership(card, user);
-        return card;
+
+        // 보드 멤버 검증
+        Board board = card.getDeck().getBoard();
+        BoardMember boardMember = boardMemberAdapter.findByBoardAndUser(board, user);
+        boardMemberAdapter.validateBoardMember(boardMember);
+
+        List<Comment> comments = commentAdapter.findByCardId(cardId);
+//        cardAdapter.validateCardOwnership(card, user);
+        return new CardResponseDto(card, comments);
     }
 
     @Transactional
     public void updateCard(Long cardId, UpdateCardRequestDto updateCardRequestDto, User user) {
         Card card = cardAdapter.findById(cardId);
-        cardAdapter.validateCardOwnership(card, user);
+
+        // 보드 멤버 검증
+        Board board = card.getDeck().getBoard();
+        BoardMember boardMember = boardMemberAdapter.findByBoardAndUser(board, user);
+        boardMemberAdapter.validateBoardMember(boardMember);
+
         card.update(updateCardRequestDto);
         cardAdapter.save(card);
         log.info("Card updated with id: {}", card.getId());
@@ -73,7 +99,11 @@ public class CardService {
     @Transactional
     public void moveCard(Long cardId, MoveCardRequestDto moveCardRequestDto, User user) {
         Card card = cardAdapter.findById(cardId);
-        cardAdapter.validateCardOwnership(card, user);
+
+        // 보드 멤버 검증
+        Board board = card.getDeck().getBoard();
+        BoardMember boardMember = boardMemberAdapter.findByBoardAndUser(board, user);
+        boardMemberAdapter.validateBoardMember(boardMember);
 
         // 현재 덱
         Deck currDeck = card.getDeck();
@@ -120,7 +150,11 @@ public class CardService {
     @Transactional
     public void deleteCard(Long cardId, User user) {
         Card card = cardAdapter.findById(cardId);
-        cardAdapter.validateCardOwnership(card, user);
+
+        // 보드 멤버 검증
+        Board board = card.getDeck().getBoard();
+        BoardMember boardMember = boardMemberAdapter.findByBoardAndUser(board, user);
+        boardMemberAdapter.validateBoardMember(boardMember);
 
         Deck deck = card.getDeck();
         if (deck.getHeadCardId().equals(cardId)) {

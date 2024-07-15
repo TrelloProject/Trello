@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>trello</title>
+  <link rel="stylesheet" th:href="@{/css/reset.css}">
+  <link rel="stylesheet" th:href="@{/css/style.css}">
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+</head>
+<body>
+
+<div class="middle-container">
+  <div class="auth-form">
+    <h2>Signup</h2>
+    <form id="authForm">
+      <label for="username">Username</label>
+      <input type="text" id="username" name="username" required>
+
+      <label for="password">Password</label>
+      <input type="password" id="password" name="password" required>
+
+      <label for="name">Name</label>
+      <input type="text" id="name" name="name" required>
+
+      <button type="button" id="btnSignup">Sign Up</button>
+    </form>
+  </div>
+</div>
+
+<script>
+  $('#authForm').on('click', '#btnSignup', function () {
+    const username = $('#username').val();
+    const password = $('#password').val();
+    const name = $('#name').val();
+
+    const data = {
+      username: username,
+      password: password,
+      name: name
+    };
+    console.log(data);
+
+    // $.ajax({
+    //   type: 'post',
+    //   url: '',
+    //   data: JSON.stringify(data),
+    //   contentType: "application/json;charset=utf-8"
+    // })
+    // .done(function(result, status, xhr) {
+    // })
+    // .fail(function(xhr, status, er) {
+    // });
+  });
+</script>
+
+</body>
+</html>
