@@ -4,7 +4,7 @@ import com.sparta.trello.domain.boardMember.entity.BoardMember;
 import com.sparta.trello.domain.boardMember.entity.BoardRole;
 import com.sparta.trello.domain.boardMember.repository.BoardMemberAdapter;
 import com.sparta.trello.domain.user.adapter.UserAdapter;
-import com.sparta.trello.domain.user.dto.GrantBoardRoleDto;
+import com.sparta.trello.domain.user.dto.GrantBoardRoleRequestDto;
 import com.sparta.trello.domain.user.dto.SignupRequestDto;
 import com.sparta.trello.domain.user.entity.User;
 import com.sparta.trello.exception.custom.boardMember.detail.BoardMemberCodeEnum;
@@ -46,15 +46,16 @@ public class UserService {
     }
 
     @Transactional
-    public void grantRole(User loginUser, GrantBoardRoleDto grantBoardRoleDto) {
+    public void grantRole(User loginUser, GrantBoardRoleRequestDto grantBoardRoleRequestDto) {
         // 프론트에서 ID값으로 넘겨줄 수 있을 듯
-        User grantUser = userAdapter.findByUsername(grantBoardRoleDto.getUsername());
+        User grantUser = userAdapter.findByUsername(grantBoardRoleRequestDto.getUsername());
         if (loginUser.getId().equals(grantUser.getId())) {
-            throw new BoardMemberDetailCustomException(BoardMemberCodeEnum.CANNOT_GRANT_PERMISSION_TO_SELF);
+            throw new BoardMemberDetailCustomException(
+                BoardMemberCodeEnum.CANNOT_GRANT_PERMISSION_TO_SELF);
         }
         long start = System.currentTimeMillis();
         List<BoardMember> twoBoardMember = boardMemberAdapter.findByBoardIdTwoBoardMember(
-            grantBoardRoleDto.getBoardId(),
+            grantBoardRoleRequestDto.getBoardId(),
             List.of(loginUser.getId(), grantUser.getId())
         );
         long end = System.currentTimeMillis();

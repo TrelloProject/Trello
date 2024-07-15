@@ -5,7 +5,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 
 @Getter
-public class GrantBoardRoleDto {
+public class GrantBoardRoleRequestDto {
 
     @NotBlank(message = "권한을 줄 사용자 아이디를 입력하세요.")
     private String username;
