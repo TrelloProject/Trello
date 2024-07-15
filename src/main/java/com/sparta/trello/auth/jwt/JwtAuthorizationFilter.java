@@ -77,6 +77,9 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
                 String refreshToken = findUser.getRefreshToken().substring(JwtUtil.BEARER_PREFIX.length());
                 if (StringUtils.hasText(refreshToken) && jwtUtil.validateToken(refreshToken)) {
                     setAuthentication(findUser.getUsername());
+                } else {
+                    response.sendRedirect("/users/login");
+                    return;
                 }
             } else {
                 log.error("DB에 refresh 토큰 없음. 로그인부터 해야 됨");
@@ -96,10 +99,14 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
                     String newToken = jwtUtil.createAccessToken(username, findUser.getAuthRole());
                     response.setHeader(JwtUtil.ACCESS_TOKEN_HEADER, newToken);
                     setAuthentication(username);
+                } else {
+                    log.error("refresh 토큰 없음. 로그인부터 해야 됨");
+                    response.sendRedirect("/users/login");
+                    return;
                 }
             } else {
                 log.error("access 토큰 없음. 로그인부터 해야 됨");
-                request.getRequestDispatcher("/users/login").forward(request, response);
+                response.sendRedirect("/users/login");
                 return;
             }
         }

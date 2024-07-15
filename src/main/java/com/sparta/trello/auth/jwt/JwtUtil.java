@@ -19,8 +19,6 @@ import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.util.Base64;
 import java.util.Date;
-import java.util.Enumeration;
-import java.util.Set;
 import java.util.UUID;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -120,7 +118,8 @@ public class JwtUtil {
             throw new JwtException(JwtCodeEnum.INVALID_JWT_SIGNATURE);
         } catch (ExpiredJwtException e) {
             log.error("Expired JWT token, 만료된 JWT token 입니다.");
-            throw new JwtException(JwtCodeEnum.EXPIRED_JWT_TOKEN);
+            return false;
+//            throw new JwtException(JwtCodeEnum.EXPIRED_JWT_TOKEN);
         } catch (UnsupportedJwtException e) {
             log.error("Unsupported JWT token, 지원되지 않는 JWT 토큰 입니다.");
             throw new JwtException(JwtCodeEnum.UNSUPPORTED_JWT_TOKEN);
