@@ -4,7 +4,8 @@ import com.sparta.trello.domain.board.entity.Board;
 import com.sparta.trello.domain.board.repository.BoardAdapter;
 import com.sparta.trello.domain.boardMember.entity.BoardMember;
 import com.sparta.trello.domain.boardMember.repository.BoardMemberAdapter;
-import com.sparta.trello.domain.deck.dto.DeckRequestDto;
+import com.sparta.trello.domain.deck.dto.CreateDeckRequestDto;
+import com.sparta.trello.domain.deck.dto.UpdateDeckRequestDto;
 import com.sparta.trello.domain.deck.entity.Deck;
 import com.sparta.trello.domain.deck.repository.DeckAdapter;
 import com.sparta.trello.domain.user.entity.User;
@@ -30,7 +31,7 @@ public class DeckService {
      * @param user       로그인 유저
      */
     @Transactional
-    public void createDeck(DeckRequestDto requestDto, User user) {
+    public void createDeck(CreateDeckRequestDto requestDto, User user) {
         Board board = boardAdapter.findById(requestDto.getBoardId());
 
         BoardMember boardMember = boardMemberAdapter.findByBoardAndUser(board, user);
@@ -68,7 +69,7 @@ public class DeckService {
      * @param requestDto 수정할 deck 정보
      */
     @Transactional
-    public void updateDeck(Long deckId, DeckRequestDto requestDto, User user) {
+    public void updateDeck(Long deckId, UpdateDeckRequestDto requestDto, User user) {
         Deck deck = deckAdapter.findById(deckId);
         BoardMember boardMember = boardMemberAdapter.findByBoardAndUser(deck.getBoard(), user);
 

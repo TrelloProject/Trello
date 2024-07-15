@@ -3,8 +3,9 @@ package com.sparta.trello.domain.deck.controller;
 import com.sparta.trello.auth.UserDetailsImpl;
 import com.sparta.trello.common.response.MessageResponseDto;
 import com.sparta.trello.common.response.ResponseUtils;
-import com.sparta.trello.domain.deck.dto.DeckRequestDto;
+import com.sparta.trello.domain.deck.dto.CreateDeckRequestDto;
 import com.sparta.trello.domain.deck.dto.MoveDeckRequestDto;
+import com.sparta.trello.domain.deck.dto.UpdateDeckRequestDto;
 import com.sparta.trello.domain.deck.service.DeckService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -31,7 +32,7 @@ public class DeckController {
      */
     @PostMapping
     public ResponseEntity<MessageResponseDto> createDeck(
-            @Valid @RequestBody DeckRequestDto requestDto,
+            @Valid @RequestBody CreateDeckRequestDto requestDto,
             @AuthenticationPrincipal UserDetailsImpl user
             ){
 
@@ -49,7 +50,7 @@ public class DeckController {
     @PutMapping("/{deckId}")
     public ResponseEntity<MessageResponseDto> updateDeck(
             @PathVariable Long deckId,
-            @Valid @RequestBody DeckRequestDto requestDto,
+            @Valid @RequestBody UpdateDeckRequestDto requestDto,
             @AuthenticationPrincipal UserDetailsImpl user
             ){
         deckService.updateDeck(deckId, requestDto, user.getUser());

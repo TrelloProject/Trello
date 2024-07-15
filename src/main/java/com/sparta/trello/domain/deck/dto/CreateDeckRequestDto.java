@@ -5,7 +5,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 
 @Getter
-public class DeckRequestDto {
+public class CreateDeckRequestDto {
 
     @NotNull(message = "보드 id를 입력하세요.")
     private Long boardId;

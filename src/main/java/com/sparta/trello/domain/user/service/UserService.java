@@ -52,11 +52,13 @@ public class UserService {
         if (loginUser.getId().equals(grantUser.getId())) {
             throw new BoardMemberDetailCustomException(BoardMemberCodeEnum.CANNOT_GRANT_PERMISSION_TO_SELF);
         }
-
+        long start = System.currentTimeMillis();
         List<BoardMember> twoBoardMember = boardMemberAdapter.findByBoardIdTwoBoardMember(
             grantBoardRoleDto.getBoardId(),
             List.of(loginUser.getId(), grantUser.getId())
         );
+        long end = System.currentTimeMillis();
+        log.info("{} ms", (end - start));
         BoardMember manager = null, user = null;
         for (BoardMember boardMember : twoBoardMember) {
             if (boardMember.getUser().getId().equals(loginUser.getId())) {
