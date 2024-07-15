@@ -8,7 +8,6 @@ import com.sparta.trello.domain.card.dto.CardResponseDto;
 import com.sparta.trello.domain.card.dto.CreateCardRequestDto;
 import com.sparta.trello.domain.card.dto.MoveCardRequestDto;
 import com.sparta.trello.domain.card.dto.UpdateCardRequestDto;
-import com.sparta.trello.domain.card.entity.Card;
 import com.sparta.trello.domain.card.service.CardService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -25,7 +24,6 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
 
 @RequiredArgsConstructor
 @Slf4j
@@ -46,10 +44,10 @@ public class CardController {
 
     @GetMapping("/{cardId}")
     @ResponseBody
-    public CardResponseDto getCard(
+    public ResponseEntity<DataResponseDto<CardResponseDto>> getCard(
         @PathVariable Long cardId,
         @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        return cardService.getCard(cardId, userDetails.getUser());
+        return ResponseUtils.findOk(cardService.getCard(cardId, userDetails.getUser()));
     }
 
     @PutMapping("/{cardId}")
