@@ -1,6 +1,7 @@
-package com.sparta.trello.domain.comment.repository;
+package com.sparta.trello.domain.comment.adapter;
 
 import com.sparta.trello.domain.comment.entity.Comment;
+import com.sparta.trello.domain.comment.repository.CommentRepository;
 import com.sparta.trello.domain.user.entity.User;
 import com.sparta.trello.exception.custom.comment.CommentCodeEnum;
 import com.sparta.trello.exception.custom.comment.detail.CommentNoPermissionException;
