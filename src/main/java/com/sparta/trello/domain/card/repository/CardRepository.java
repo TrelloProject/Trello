@@ -11,8 +11,6 @@ public interface CardRepository extends JpaRepository<Card, Long> {
 
     Card findCardByNextId(Long cardId);
 
-    Optional<Card> findTopByDeckIdOrderByIdDesc(Long deckId);
-
     List<Card> findAllByDeckId(Long deckId);
 
     @Query("SELECT c FROM Card c JOIN FETCH c.deck WHERE c.id = :cardId")

@@ -39,7 +39,11 @@ public class CardAdapter {
     }
 
     public Optional<Card> findLastCardByDeckId(Long deckId) {
-        return cardRepository.findTopByDeckIdOrderByIdDesc(deckId);
+        List<Card> sortedCards = getSortedCards(deckId);
+        if (sortedCards.isEmpty()) {
+            return Optional.empty();
+        }
+        return Optional.of(sortedCards.get(sortedCards.size() - 1));
     }
 
     public Card findCardByNextId(Long cardId) {
@@ -51,6 +55,16 @@ public class CardAdapter {
     }
 
     public Card findCardByDeckIdAndIndex(Long deckId, int index) {
+        List<Card> sortedCards = getSortedCards(deckId);
+
+        if (index < 0 || index >= sortedCards.size()) {
+            throw new CardIndexOutOfBoundsException(CardCodeEnum.CARD_INDEX_OUT_OF_BOUNDS_ERROR);
+        }
+
+        return sortedCards.get(index);
+    }
+
+    private List<Card> getSortedCards(Long deckId) {
         List<Card> cards = findAllByDeckId(deckId);
 
         if (cards.isEmpty()) {
@@ -74,10 +88,6 @@ public class CardAdapter {
             currCard = cardMap.get(currCard.getNextId());
         }
 
-        if (index < 0 || index >= sortedCards.size()) {
-            throw new CardIndexOutOfBoundsException(CardCodeEnum.CARD_INDEX_OUT_OF_BOUNDS_ERROR);
-        }
-
-        return sortedCards.get(index);
+        return sortedCards;
     }
 }

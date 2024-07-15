@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>trello</title>
+  <link rel="stylesheet" th:href="@{/css/reset.css}">
+  <link rel="stylesheet" th:href="@{/css/style.css}">
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+</head>
+<body>
+<h1 id="board-title" th:text="${board.getTitle()}">Board Name</h1>
+<p id="board-description" th:text="${board.getDescription()}">Board Description</p>
+<button id="inviteBoardBtn">보드 초대</button>
+<button id="grantBoardManagerBtn">권한 부여</button>
+<button id="addDeckBtn">덱 추가</button>
+<button id="editBoardBtn">보드 수정</button>
+<button id="deleteBoardBtn">보드 삭제</button>
+<div id="board">
+  <div class="deck" draggable="true" data-id="1"
+       th:data-id="${items.getDeck().getId()}" th:each="items : ${board.getBoardItems()}">
+    <div class="deck-header">
+      <div class="deck-menu">
+        <button class="editBtn">수정</button>
+        <button class="deleteBtn">삭제</button>
+      </div>
+      <h2 th:text="${items.getDeck().getTitle()}">Deck 1</h2>
+    </div>
+    <ul class="card-list">
+      <li class="draggable" draggable="true" data-id="1"
+          th:data-id="${cards.getId()}" th:each="cards : ${items.getCards()}">
+        <div class="el" th:text="${cards.getTitle()}">HTML</div>
+      </li>
+    </ul>
+    <button class="addCardBtn bottom-button-design">Add Card</button>
+  </div>
+</div>
+
+<div id="modal" class="modal">
+  <div class="modal-content">
+    <div>
+      <button id="edit-card-btn">수정</button>
+      <button id="delete-card-btn">삭제</button>
+      <span class="close-btn">&times;</span>
+    </div>
+    <h3>제목</h3>
+    <h2 id="modal-title">Card Title</h2>
+    <h3>설명</h3>
+    <p id="modal-description">Card Description</p>
+    <h3>시작 날짜</h3>
+    <p id="modal-start-date">Start Date</p>
+    <h3>마감 날짜</h3>
+    <p id="modal-due-date">Due Date</p>
+    <h3>댓글</h3>
+    <ul id="comment-list">
+      <!-- Comments will be appended here -->
+    </ul>
+    <textarea id="new-comment" placeholder="Add a comment"></textarea>
+    <button id="add-comment-btn" class="bottom-button-design">Add Comment</button>
+  </div>
+</div>
+
+
+<div id="editBoardModal" class="modal">
+  <div class="modal-content">
+    <span class="close-btn">&times;</span>
+    <h2>Edit Board</h2>
+    <label for="board-name-input">Board Name</label>
+    <input type="text" id="board-name-input" th:text="${board.getTitle()}">
+    <label for="board-description-input">Board Description</label>
+    <textarea id="board-description-input" th:text="${board.getDescription()}">Board Description</textarea>
+    <button id="save-board-btn" class="bottom-button-design">Save</button>
+  </div>
+</div>
+
+<!-- 카드 생성 -->
+<div id="addCardModal" class="modal">
+  <div class="modal-content">
+    <span class="close-btn">&times;</span>
+    <h2 id="card-modal-title">새 카드 작성</h2>
+    <form id="addCardForm" data-mode="add" data-card-id="">
+      <label for="card-title-input">Card Title</label>
+      <input type="text" id="card-title-input" placeholder="Enter card title" required>
+
+      <label for="card-description-input">Description</label>
+      <textarea id="card-description-input" placeholder="Enter description" required></textarea>
+
+      <label for="card-start-date">Start Date</label>
+      <input type="date" id="card-start-date">
+
+      <label for="card-due-date">Due Date</label>
+      <input type="date" id="card-due-date">
+
+      <button type="submit" id="card-form-submit-btn" class="bottom-button-design">Add Card</button>
+    </form>
+  </div>
+</div>
+
+
+
+<script th:src="@{/js/detail.js}"></script>
+<script>
+  const urlPath = window.location.pathname;
+  const boardId = urlPath.substring(urlPath.lastIndexOf('/') + 1, urlPath.length);
+
+  // 보드 수정
+  $('#save-board-btn').on('click', function () {
+    const title = $('#board-name-input').val();
+    const description = $('#board-description-input').val();
+
+    const data = {
+      title: title,
+      description: description
+    };
+    console.log(data);
+
+    $.ajax({
+      type: 'put',
+      url: '/boards/' + boardId,
+      data: JSON.stringify(data),
+      contentType: "application/json;charset=utf-8"
+    })
+    .done(function(result, status, xhr) {
+      location.replace(location.href);
+    })
+    .fail(function(xhr, status, er) {
+      alert("보드 수정 실패");
+    });
+  });
+
+  // 보드 초대
+  $('#inviteBoardBtn').on('click', function () {
+    const newMember = prompt("초대할 사용자 아이디");
+
+    const data = {
+      username: newMember
+    }
+
+    if (newMember) {
+      $.ajax({
+        type: 'post',
+        url: '/boards/' + boardId + '/invitation',
+        data: JSON.stringify(data),
+        contentType: "application/json;charset=utf-8"
+      })
+      .done(function(result, status, xhr) {
+        alert("초대 성공");
+      })
+      .fail(function(xhr, status, er) {
+        alert("초대 실패");
+      });
+    }
+  });
+
+  // 권한 부여
+  $('#grantBoardManagerBtn').on('click', function () {
+    const newMember = prompt("매니저 권한을 줄 사용자 아이디");
+
+    const data = {
+      username: newMember,
+      boardId: boardId
+    }
+
+    if (newMember) {
+      $.ajax({
+        type: 'put',
+        url: '/users/role',
+        data: JSON.stringify(data),
+        contentType: "application/json;charset=utf-8"
+      })
+      .done(function(result, status, xhr) {
+        alert("권한 부여 성공");
+      })
+      .fail(function(xhr, status, er) {
+        alert("권한 부여 실패");
+      });
+    }
+  });
+
+  // 덱 추가
+  $('#addDeckBtn').on('click', function () {
+    const deckName = prompt('새로운 덱 제목');
+    if (!deckName) {
+      return;
+    }
+
+    const data = {
+      title: deckName
+    }
+
+    $.ajax({
+      type: 'post',
+      url: '/decks/' + boardId,
+      data: JSON.stringify(data),
+      contentType: "application/json;charset=utf-8"
+    })
+    .done(function(result, status, xhr) {
+      location.replace(location.href);
+    })
+    .fail(function(xhr, status, er) {
+      alert("덱 생성 실패");
+    });
+  });
+
+  // 덱 수정
+  $('.deck').on('click', '.editBtn', function() {
+    const deck = $(this).closest('.deck');
+    const deckTitle = deck.find('h2').text();
+
+    const newTitle = prompt('덱 이름 변경', deckTitle);
+    if (!newTitle) {
+      return;
+    }
+
+    const data = {
+      title: newTitle
+    }
+
+    const deckId = deck.attr('data-id');
+    $.ajax({
+      type: 'put',
+      url: '/decks/' + deckId,
+      data: JSON.stringify(data),
+      contentType: "application/json;charset=utf-8"
+    })
+    .done(function(result, status, xhr) {
+      location.replace(location.href);
+    })
+    .fail(function(xhr, status, er) {
+      alert("덱 수정 실패");
+    });
+  });
+
+  // 덱 삭제
+  $('.deck').on('click', '.deleteBtn', function() {
+    const deck = $(this).closest('.deck');
+
+    if (confirm('현재 덱을 삭제하시겠습니까?')) {
+      const deckId = deck.attr('data-id');
+      $.ajax({
+        type: 'delete',
+        url: '/decks/' + deckId
+      })
+      .done(function(result, status, xhr) {
+        deck.remove();
+      })
+      .fail(function(xhr, status, er) {
+        alert("덱 삭제 실패");
+      });
+    }
+  });
+
+  // 카드 추가
+  // 카드 모달창 열기
+  $('.addCardBtn').on('click', function () {
+    const deck = $(this).closest('.deck');
+    const deckId = deck.data('id'); // 덱 ID 가져오기
+
+    // 모달 설정을 추가 모드로
+    $('#addCardForm').attr('data-mode', 'add').attr('data-card-id', '');
+    $('#card-modal-title').text('새 카드 작성');
+    $('#card-form-submit-btn').text('Add Card');
+
+    // 입력 필드 초기화
+    $('#card-title-input').val('');
+    $('#card-description-input').val('');
+    $('#card-start-date').val('');
+    $('#card-due-date').val('');
+
+    $('#addCardModal').attr('data-deck-id', deckId).show();
+  });
+  // 카드 저장 폼
+  $('#addCardForm').on('submit', function(event) {
+    event.preventDefault(); // 폼 기본 제출 막기
+    const title = $('#card-title-input').val();
+    const description = $('#card-description-input').val();
+    const startDate = $('#card-start-date').val();
+    const dueDate = $('#card-due-date').val();
+
+    const mode = $('#addCardForm').attr('data-mode');
+    // 카드 추가
+    if (mode === 'add') {
+      const deckId = $('#addCardModal').attr('data-deck-id');
+
+      const data = {
+        deckId: deckId,
+        title: title,
+        description: description,
+        startDate: startDate,
+        dueDate: dueDate
+      };
+
+      $.ajax({
+        type: 'post',
+        url: '/cards',
+        contentType: 'application/json;charset=utf-8',
+        data: JSON.stringify(data)
+      })
+      .done(function(result, status, xhr) {
+        location.replace(location.href);
+      })
+      .fail(function(xhr, status, er) {
+        alert('카드 추가 실패');
+      });
+    }
+    // 카드 수정
+    else if (mode === 'edit') {
+      const cardId = $('#addCardForm').attr('data-card-id');
+
+      const data = {
+        title: title,
+        description: description,
+        startDate: startDate,
+        dueDate: dueDate
+      };
+
+      $.ajax({
+        type: 'put',
+        url: '/cards/' + cardId,
+        contentType: 'application/json;charset=utf-8',
+        data: JSON.stringify(data)
+      })
+      .done(function(result, status, xhr) {
+        location.replace(location.href);
+      })
+      .fail(function(xhr, status, er) {
+        alert('카드 수정 실패');
+      });
+    }
+  });
+
+  // 카드 수정
+  $('#edit-card-btn').on('click', function () {
+    const cardId = $('#modal').attr('data-id');
+    const cardTitle = $('#modal-title').text();
+    const cardDescription = $('#modal-description').text();
+    const cardStartDate = $('#modal-start-date').text();
+    const cardDueDate = $('#modal-due-date').text();
+
+    // 모달 설정을 수정 모드로
+    $('#addCardForm').attr('data-mode', 'edit').attr('data-card-id', cardId);
+    $('#card-modal-title').text('카드 수정');
+    $('#card-form-submit-btn').text('Update Card');
+
+    // 입력 필드 초기화
+    $('#card-title-input').val(cardTitle);
+    $('#card-description-input').val(cardDescription);
+    $('#card-start-date').val(cardStartDate);
+    $('#card-due-date').val(cardDueDate);
+
+    $('#modal').hide();
+    $('#addCardModal').show();
+  });
+  $('.card-list').on('click', '#edit-card-btn', function () {
+    const cardId = $(this).data('card-id');
+    const cardTitle = $(this).data('card-title');
+    const cardDescription = $(this).data('card-description');
+    const cardStartDate = $(this).data('card-start-date');
+    const cardDueDate = $(this).data('card-due-date');
+
+    // 모달 설정을 수정 모드로
+    $('#addCardForm').attr('data-mode', 'edit').attr('data-card-id', cardId);
+    $('#card-modal-title').text('카드 수정');
+    $('#card-form-submit-btn').text('Update Card');
+
+    // 입력 필드 채우기
+    $('#card-title-input').val(cardTitle);
+    $('#card-description-input').val(cardDescription);
+    $('#card-start-date').val(cardStartDate);
+    $('#card-due-date').val(cardDueDate);
+
+    $('#addCardModal').show();
+  });
+
+  // 카드 단일 조회
+  $('.card-list').on('click', 'li', function () {
+    const cardId = $(this).data('id');
+
+    $.ajax({
+      type: 'get',
+      url: '/cards/' + cardId
+    })
+    .done(function(result, status, xhr) {
+      // 카드 내용
+      $('#modal-title').text(result.title);
+      $('#modal-description').text(result.description);
+      $('#modal-start-date').text(result.startDate);
+      $('#modal-due-date').text(result.dueDate);
+
+      // 댓글 내용
+      const commentList = $('#comment-list');
+      commentList.empty(); // 기존 댓글 목록을 비우기
+      result.comments.forEach(function(comment) {
+        commentList.append(`
+        <li data-comment-id="${comment.id}">
+          <span>${comment.content}</span>
+          <div class="comment-actions">
+            <button class="edit-comment-btn">수정</button>
+            <button class="delete-comment-btn">삭제</button>
+          </div>
+        </li>
+      `);
+      });
+
+      $('#modal').attr('data-id', cardId).show();
+    })
+    .fail(function(xhr, status, er) {
+      alert('카드 단일 조회 실패');
+    });
+  });
+
+  // 카드 삭제
+  $('#delete-card-btn').on('click', function () {
+    if (confirm('현재 카드를 삭제하시겠습니까?')) {
+      const cardId = $('#modal').attr('data-id');
+
+      $.ajax({
+        type: 'delete',
+        url: '/cards/' + cardId
+      })
+      .done(function(result, status, xhr) {
+        location.replace(location.href);
+      })
+      .fail(function(xhr, status, er) {
+        alert('카드 삭제 실패');
+      });
+    }
+  });
+
+  // 댓글 추가
+  $('#add-comment-btn').on('click', function () {
+    const cardId = $('#modal').attr('data-id');
+    const commentContent = $('#new-comment').val();
+
+    if (!commentContent) {
+      alert('댓글 내용을 입력하세요.');
+      return;
+    }
+
+    const data = {
+      cardId: cardId,
+      content: commentContent
+    };
+
+    $.ajax({
+      type: 'post',
+      url: '/comments',
+      contentType: 'application/json;charset=utf-8',
+      data: JSON.stringify(data)
+    })
+    .done(function(result, status, xhr) {
+      const commentList = $('#comment-list');
+      commentList.append(`
+        <li data-comment-id="${result.data.id}">
+          <span>${result.data.content}</span>
+          <div class="comment-actions">
+            <button class="edit-comment-btn">수정</button>
+            <button class="delete-comment-btn">삭제</button>
+          </div>
+        </li>
+      `);
+      $('#new-comment').val(''); // 입력 필드 초기화
+      alert('댓글 등록 성공');
+    })
+    .fail(function(xhr, status, er) {
+      alert('댓글 추가 실패');
+    });
+  });
+
+  // 댓글 수정
+  $('#comment-list').on('click', '.edit-comment-btn', function () {
+    const commentItem = $(this).closest('li');
+    const commentId = commentItem.data('comment-id');
+    const currentContent = commentItem.find('span').text();
+    const newContent = prompt('댓글 수정', currentContent);
+
+    if (!newContent) {
+      return;
+    }
+
+    const data = {
+      content: newContent
+    };
+
+    $.ajax({
+      type: 'put',
+      url: '/comments/' + commentId,
+      contentType: 'application/json;charset=utf-8',
+      data: JSON.stringify(data)
+    })
+    .done(function(result, status, xhr) {
+      commentItem.find('span').text(`${result.data.content}`);
+      alert('댓글 수정 성공');
+    })
+    .fail(function(xhr, status, er) {
+      alert('댓글 수정 실패');
+    });
+  });
+
+  // 댓글 삭제
+  $('#comment-list').on('click', '.delete-comment-btn', function () {
+    const commentItem = $(this).closest('li');
+    const commentId = commentItem.data('comment-id');
+
+    if (confirm('현재 댓글을 삭제하시겠습니까?')) {
+      $.ajax({
+        type: 'delete',
+        url: '/comments/' + commentId
+      })
+      .done(function(result, status, xhr) {
+        commentItem.remove();
+        alert('댓글 삭제 성공');
+      })
+      .fail(function(xhr, status, er) {
+        alert('댓글 삭제 실패');
+      });
+    }
+  });
+</script>
+
+</body>
+</html>

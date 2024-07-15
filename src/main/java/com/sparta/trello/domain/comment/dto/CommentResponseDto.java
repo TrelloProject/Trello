@@ -10,24 +10,20 @@ import java.time.LocalDateTime;
 @Getter
 public class CommentResponseDto {
 
-    private final Long commentId;
-
-    private final User user;
-
-    private final Card card;
-
+    private final Long id;
     private final String content;
 
-    private final LocalDateTime createdAt;
-
-    private final LocalDateTime updatedAt;
+//    private final User user;
+//    private final Card card;
+//    private final LocalDateTime createdAt;
+//    private final LocalDateTime updatedAt;
 
     public CommentResponseDto(Comment comment) {
-        this.commentId = comment.getId();
-        this.user = comment.getUser();
-        this.card = comment.getCard();
+        this.id = comment.getId();
         this.content = comment.getContent();
-        this.createdAt = comment.getCreatedAt();
-        this.updatedAt = comment.getUpdatedAt();
+//        this.user = comment.getUser();
+//        this.card = comment.getCard();
+//        this.createdAt = comment.getCreatedAt();
+//        this.updatedAt = comment.getUpdatedAt();
     }
 }

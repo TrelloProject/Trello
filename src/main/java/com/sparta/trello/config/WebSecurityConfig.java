@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -80,8 +81,8 @@ public class WebSecurityConfig {
         http.authorizeHttpRequests((authorizeHttpRequests) ->
             authorizeHttpRequests
                 .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll() // resources 접근 허용 설정
-                .requestMatchers("/").permitAll()
-                .requestMatchers("/users/login", "/users/signup").permitAll()
+                .requestMatchers(HttpMethod.GET, "/").permitAll()
+                .requestMatchers(HttpMethod.GET, "/users/login", "/users/signup").permitAll()
                 .anyRequest().authenticated() // 그 외 모든 요청 인증처리
         );
 
@@ -90,8 +91,15 @@ public class WebSecurityConfig {
         http.addFilterBefore(jwtExceptionFilter(), LogoutFilter.class);
         http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
 
+        http.formLogin(formLogin ->
+            formLogin
+                // 로그인 페이지
+                .loginPage("/users/login").permitAll()
+            );
+
         http.logout(logout ->
-            logout.logoutUrl("/users/logout")
+            logout
+                .logoutUrl("/users/logout")
 //                .logoutSuccessUrl("") 로그아웃 성공했을 때 로그인 화면으로 이동
                 .addLogoutHandler(jwtLogoutHandler)
                 .logoutSuccessHandler(jwtLogoutSuccessHandler)

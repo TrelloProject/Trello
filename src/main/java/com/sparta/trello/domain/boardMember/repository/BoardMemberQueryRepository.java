@@ -8,4 +8,5 @@ import org.springframework.stereotype.Repository;
 public interface BoardMemberQueryRepository {
 
     List<BoardMember> findByTwoBoardMember(List<Long> userIds);
+    List<BoardMember> findByUserId(Long userId);
 }
