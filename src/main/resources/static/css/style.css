@@ -1,8 +1,13 @@
+* {
+  font-family: var(--fontStack-monospace, ui-monospace, SFMono-Regular, SF Mono, Menlo, Consolas, Liberation Mono, monospace);
+}
+
 body, div, ul, li {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
+
 .middle-container {
   display: flex;
   justify-content: center;
