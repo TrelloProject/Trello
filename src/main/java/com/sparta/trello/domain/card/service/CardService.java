@@ -26,6 +26,9 @@ public class CardService {
     public void createCard(CreateCardRequestDto createCardRequestDto, User user) {
         Deck deck = deckAdapter.findById(createCardRequestDto.getDeckId());
 
+        // 덱에서 가장 마지막 카드 조회
+        Optional<Card> lastCardOpt = cardAdapter.findLastCardByDeckId(deck.getId());
+
         // 새로운 카드 생성
         Card newCard = Card.builder()
             .deck(deck)
@@ -39,15 +42,13 @@ public class CardService {
         // 생성된 카드 저장
         newCard = cardAdapter.save(newCard);
 
-        // 덱에서 가장 마지막 카드 조회
-        Optional<Card> lastCardOpt = cardAdapter.findLastCardByDeckId(deck.getId());
         if (lastCardOpt.isEmpty()) { // 덱이 비어있는 경우
             deck.setHeadCardId(newCard.getId()); // 덱의 헤드 카드 아이디를 생성된 카드의 아이디로 설정
             deckAdapter.save(deck); // 덱 업데이트
         } else {
             Card lastCard = lastCardOpt.get();
 
-            lastCard.setNextId(newCard.getNextId()); // 마지막 카드의 다음 아이디를 생성된 카드의 아이디로 설정
+            lastCard.setNextId(newCard.getId()); // 마지막 카드의 다음 아이디를 생성된 카드의 아이디로 설정
             cardAdapter.save(lastCard); // 마지막 카드 업데이트
         }
         log.info("Card created with id: {}", newCard.getId());
