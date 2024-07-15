@@ -79,6 +79,7 @@
       contentType: "application/json;charset=utf-8"
     })
     .done(function(result, status, xhr) {
+      location.replace(location.href);
     })
     .fail(function(xhr, status, er) {
       console.log("보드 생성 실패");

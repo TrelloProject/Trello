@@ -18,8 +18,8 @@ public class CommentAdapter {
 
     private final CommentRepository commentRepository;
 
-    public void save(Comment comment) {
-        commentRepository.save(comment);
+    public Comment save(Comment comment) {
+        return commentRepository.save(comment);
     }
 
     public void delete(Comment comment) {

@@ -7,9 +7,6 @@
   const editBoardModal = document.getElementById('editBoardModal');
   const modalTitle = document.getElementById('modal-title');
   const modalDescription = document.getElementById('modal-description');
-  const commentList = document.getElementById('comment-list');
-  const newComment = document.getElementById('new-comment');
-  const addCommentBtn = document.getElementById('add-comment-btn');
   const closeBtns = document.querySelectorAll('.close-btn');
   const cardEditBtn = document.getElementById('edit-card-btn');
   const cardDeleteBtn = document.getElementById('delete-card-btn');
@@ -39,11 +36,6 @@
 
         console.log(`Draggable ID: ${draggableId} - Deck Index: ${deckIndex}, Draggable Index: ${draggableIndex}`);
         el.classList.remove('dragging');
-      });
-
-      el.addEventListener('click', () => {
-        showCardDetails(el);
-        currentEditingCard = el;
       });
 
       el.addEventListener('dragover', handleScroll);
@@ -152,45 +144,6 @@
     }, { offset: Number.NEGATIVE_INFINITY }).element;
   }
 
-  function adjustDeckHeight(deck) {
-    const ul = deck.querySelector('.card-list');
-    const maxHeight = parseInt(window.getComputedStyle(deck).maxHeight, 10);
-    const deckPadding = parseInt(window.getComputedStyle(deck).paddingTop, 10) +
-        parseInt(window.getComputedStyle(deck).paddingBottom, 10);
-    const headerHeight = deck.querySelector('.deck-header').offsetHeight;
-    const addCardBtnHeight = deck.querySelector('.addCardBtn').offsetHeight;
-
-    ul.style.maxHeight = `${maxHeight - headerHeight - addCardBtnHeight - deckPadding}px`;
-  }
-
-  function showCardDetails(card) {
-    const cardTitle = card.querySelector('.el').textContent;
-    const cardDescription = "This is a description for " + cardTitle; // Placeholder description
-    const comments = [
-      {id: 1, text: "This is a comment for " + cardTitle},
-      {id: 2, text: "Another comment for " + cardTitle}
-    ]; // Placeholder comments
-
-    modalTitle.textContent = cardTitle;
-    modalDescription.textContent = cardDescription;
-    commentList.innerHTML = ''; // Clear existing comments
-
-    comments.forEach(comment => {
-      const li = document.createElement('li');
-      li.setAttribute('data-id', comment.id);
-      li.innerHTML = `
-        <span>comment text</span>
-        <div class="comment-actions">
-          <button class="edit-comment-btn">수정</button>
-          <button class="delete-comment-btn">삭제</button>
-        </div>`;
-      commentList.appendChild(li);
-    });
-
-    modal.style.display = 'block';
-    attachCommentActions();
-  }
-
   function attachCommentActions() {
     const editButtons = document.querySelectorAll('.edit-comment-btn');
     const deleteButtons = document.querySelectorAll('.delete-comment-btn');
@@ -251,24 +204,6 @@
     if (currentEditingCard && confirm("Are you sure you want to delete this card?")) {
       currentEditingCard.parentNode.removeChild(currentEditingCard);
       modal.style.display = 'none';
-    }
-  });
-
-  addCommentBtn.addEventListener('click', () => {
-    const commentText = newComment.value.trim();
-    if (commentText) {
-      const commentId = Date.now();
-      const li = document.createElement('li');
-      li.setAttribute('data-id', commentId);
-      li.innerHTML = `
-        <span>${commentText}</span>
-        <div class="comment-actions">
-          <button class="edit-comment-btn">수정</button>
-          <button class="delete-comment-btn">삭제</button>
-        </div>`;
-      commentList.appendChild(li);
-      newComment.value = '';
-      attachCommentActions();
     }
   });
 

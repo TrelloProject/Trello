@@ -228,7 +228,7 @@
       location.replace(location.href);
     })
     .fail(function(xhr, status, er) {
-      alert("덱 생성 실패");
+      alert("덱 수정 실패");
     });
   });
 
@@ -246,7 +246,7 @@
         deck.remove();
       })
       .fail(function(xhr, status, er) {
-        alert("덱 생성 실패");
+        alert("덱 삭제 실패");
       });
     }
   });
@@ -394,11 +394,11 @@
       commentList.empty(); // 기존 댓글 목록을 비우기
       result.comments.forEach(function(comment) {
         commentList.append(`
-        <li>
+        <li data-comment-id="${comment.id}">
           <span>${comment.content}</span>
           <div class="comment-actions">
-            <button class="edit-comment-btn" data-comment-id="${comment.id}">수정</button>
-            <button class="delete-comment-btn" data-comment-id="${comment.id}">삭제</button>
+            <button class="edit-comment-btn">수정</button>
+            <button class="delete-comment-btn">삭제</button>
           </div>
         </li>
       `);
@@ -427,7 +427,98 @@
         alert('카드 삭제 실패');
       });
     }
-  })
+  });
+
+  // 댓글 추가
+  $('#add-comment-btn').on('click', function () {
+    const cardId = $('#modal').attr('data-id');
+    const commentContent = $('#new-comment').val();
+
+    if (!commentContent) {
+      alert('댓글 내용을 입력하세요.');
+      return;
+    }
+
+    const data = {
+      cardId: cardId,
+      content: commentContent
+    };
+
+    $.ajax({
+      type: 'post',
+      url: '/comments',
+      contentType: 'application/json;charset=utf-8',
+      data: JSON.stringify(data)
+    })
+    .done(function(result, status, xhr) {
+      const commentList = $('#comment-list');
+      commentList.append(`
+        <li data-comment-id="${result.data.id}">
+          <span>${result.data.content}</span>
+          <div class="comment-actions">
+            <button class="edit-comment-btn">수정</button>
+            <button class="delete-comment-btn">삭제</button>
+          </div>
+        </li>
+      `);
+      $('#new-comment').val(''); // 입력 필드 초기화
+      alert('댓글 등록 성공');
+    })
+    .fail(function(xhr, status, er) {
+      alert('댓글 추가 실패');
+    });
+  });
+
+  // 댓글 수정
+  $('#comment-list').on('click', '.edit-comment-btn', function () {
+    const commentItem = $(this).closest('li');
+    const commentId = commentItem.data('comment-id');
+    const currentContent = commentItem.find('span').text();
+    const newContent = prompt('댓글 수정', currentContent);
+
+    if (!newContent) {
+      return;
+    }
+
+    const data = {
+      content: newContent
+    };
+
+    $.ajax({
+      type: 'put',
+      url: '/comments/' + commentId,
+      contentType: 'application/json;charset=utf-8',
+      data: JSON.stringify(data)
+    })
+    .done(function(result, status, xhr) {
+      commentItem.find('span').text(`${result.data.content}`);
+      alert('댓글 수정 성공');
+    })
+    .fail(function(xhr, status, er) {
+      alert('댓글 수정 실패');
+    });
+  });
+
+  // 댓글 삭제
+  $('#comment-list').on('click', '.delete-comment-btn', function () {
+    const commentItem = $(this).closest('li');
+    const commentId = commentItem.data('comment-id');
+
+    if (confirm('현재 댓글을 삭제하시겠습니까?')) {
+      $.ajax({
+        type: 'delete',
+        url: '/comments/' + commentId
+      })
+      .done(function(result, status, xhr) {
+        commentItem.remove();
+        alert('댓글 삭제 성공');
+      })
+      .fail(function(xhr, status, er) {
+        alert('댓글 삭제 실패');
+      });
+    }
+  });
 </script>
+
 </body>
 </html>
