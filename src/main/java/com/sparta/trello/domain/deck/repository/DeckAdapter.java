@@ -29,8 +29,8 @@ public class DeckAdapter {
         return deckRepository.findByCountBoardIdDeck(board);
     }
 
-    public Deck findByNextId(Long nextId){
-        return deckRepository.findByNextId(nextId).orElseThrow(() ->
+    public Deck findByNextId(Long nextId, Long boardId){
+        return deckRepository.findByNextIdAndBoardId(nextId, boardId).orElseThrow(() ->
                 new DeckDetailCustomException(DeckCodeEnum.DECK_NOT_FOUND));
     }
 

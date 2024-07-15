@@ -12,5 +12,5 @@ import java.util.Optional;
 public interface DeckRepository extends JpaRepository<Deck, Long>, DeckQueryRepository {
     List<Deck> findByBoard(Board board);
 
-    Optional<Deck> findByNextId(Long nextId);
+    Optional<Deck> findByNextIdAndBoardId(Long nextId, Long boardId);
 }

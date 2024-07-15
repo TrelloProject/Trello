@@ -50,7 +50,7 @@ public class DeckService {
             // 보드의 head_deck_id 업데이트
             board.updateHeadDeckId(deck.getId());
         } else {
-            Deck prevDeck = deckAdapter.findByNextId(null);
+            Deck prevDeck = deckAdapter.findByNextId(null, boardId);
 
             Deck deck = Deck.builder()
                 .title(requestDto.getTitle())
