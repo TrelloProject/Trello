@@ -26,13 +26,12 @@ public class DeckService {
     /**
      * deck 생성
      *
-     * @param user       로그인 유저
-     * @param boardId    deck을 생성할 보드의 id
      * @param requestDto 생성할 deck 정보
+     * @param user       로그인 유저
      */
     @Transactional
-    public void createDeck(Long boardId, DeckRequestDto requestDto, User user) {
-        Board board = boardAdapter.findById(boardId);
+    public void createDeck(DeckRequestDto requestDto, User user) {
+        Board board = boardAdapter.findById(requestDto.getBoardId());
 
         BoardMember boardMember = boardMemberAdapter.findByBoardAndUser(board, user);
         boardMemberAdapter.validateBoardManager(boardMember);
@@ -50,7 +49,7 @@ public class DeckService {
             // 보드의 head_deck_id 업데이트
             board.updateHeadDeckId(deck.getId());
         } else {
-            Deck prevDeck = deckAdapter.findByNextId(null, boardId);
+            Deck prevDeck = deckAdapter.findByNextId(null, requestDto.getBoardId());
 
             Deck deck = Deck.builder()
                 .title(requestDto.getTitle())

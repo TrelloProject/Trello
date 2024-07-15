@@ -231,12 +231,13 @@
     }
 
     const data = {
+      boardId: boardId,
       title: deckName
     }
 
     $.ajax({
       type: 'post',
-      url: '/decks/' + boardId,
+      url: '/decks',
       data: JSON.stringify(data),
       contentType: "application/json;charset=utf-8"
     })

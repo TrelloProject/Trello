@@ -29,14 +29,13 @@ public class DeckController {
      * @param requestDto 생성할 deck 정보
      * @return 생성 성공 메세지 전송
      */
-    @PostMapping("/{boardId}")
+    @PostMapping
     public ResponseEntity<MessageResponseDto> createDeck(
-            @PathVariable Long boardId,
             @Valid @RequestBody DeckRequestDto requestDto,
             @AuthenticationPrincipal UserDetailsImpl user
             ){
 
-        deckService.createDeck(boardId, requestDto, user.getUser());
+        deckService.createDeck(requestDto, user.getUser());
         return ResponseUtils.createOk();
     }
 
