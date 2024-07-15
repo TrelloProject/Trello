@@ -1,17 +1,16 @@
 package com.sparta.trello.domain.board.service;
 
-import com.sparta.trello.UpdateBoardRequest;
 import com.sparta.trello.domain.board.dto.BoardDto;
 import com.sparta.trello.domain.board.dto.BoardItemsDto;
 import com.sparta.trello.domain.board.dto.BoardResponseDto;
-import com.sparta.trello.domain.board.dto.CreateBoardRequest;
+import com.sparta.trello.domain.board.dto.CreateBoardRequestDto;
 import com.sparta.trello.domain.board.dto.InviteBoardRequestDto;
+import com.sparta.trello.domain.board.dto.UpdateBoardRequestDto;
 import com.sparta.trello.domain.board.entity.Board;
 import com.sparta.trello.domain.board.repository.BoardAdapter;
 import com.sparta.trello.domain.boardMember.entity.BoardMember;
 import com.sparta.trello.domain.boardMember.entity.BoardRole;
 import com.sparta.trello.domain.boardMember.repository.BoardMemberAdapter;
-import com.sparta.trello.domain.boardMember.repository.BoardMemberQueryRepository;
 import com.sparta.trello.domain.boardMember.repository.BoardMemberRepository;
 import com.sparta.trello.domain.card.adapter.CardAdapter;
 import com.sparta.trello.domain.card.dto.CardDto;
@@ -23,15 +22,14 @@ import com.sparta.trello.domain.user.adapter.UserAdapter;
 import com.sparta.trello.domain.user.entity.User;
 import com.sparta.trello.exception.custom.boardMember.detail.BoardMemberCodeEnum;
 import com.sparta.trello.exception.custom.boardMember.detail.BoardMemberDetailCustomException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @RequiredArgsConstructor
 @Service
@@ -46,7 +44,7 @@ public class BoardService {
     private final CardAdapter cardAdapter;
 
     @Transactional
-    public BoardResponseDto createBoard(CreateBoardRequest request, User user) {
+    public BoardResponseDto createBoard(CreateBoardRequestDto request, User user) {
         Board board = Board.builder()
             .title(request.getTitle())
             .description(request.getDescription())
@@ -79,7 +77,7 @@ public class BoardService {
     }
 
     @Transactional
-    public BoardResponseDto updateBoard(Long boardId, UpdateBoardRequest request, User user) {
+    public BoardResponseDto updateBoard(Long boardId, UpdateBoardRequestDto request, User user) {
         Board board = boardAdapter.findById(boardId);
         BoardMember member = boardMemberAdapter.findByBoardAndUser(board, user);
         boardMemberAdapter.validateBoardManager(member);
@@ -113,7 +111,8 @@ public class BoardService {
         Board findBoard = boardAdapter.findById(boardId);
         Long currentDeckId = findBoard.getHeadDeckId();
         List<Deck> findDecks = deckAdapter.findByBoard(findBoard);
-        Map<Long, Deck> deckMap = findDecks.stream().collect(Collectors.toMap(Deck::getId, deck -> deck));
+        Map<Long, Deck> deckMap = findDecks.stream()
+            .collect(Collectors.toMap(Deck::getId, deck -> deck));
 
         List<DeckDto> sortedDeckDtos = new ArrayList<>();
         while (currentDeckId != null) {
@@ -128,7 +127,8 @@ public class BoardService {
         for (DeckDto deckDto : sortedDeckDtos) {
             Deck deck = deckMap.get(deckDto.getId());
             List<Card> allCards = cardAdapter.findAllByDeckId(deck.getId());
-            Map<Long, Card> cardMap = allCards.stream().collect(Collectors.toMap(Card::getId, card -> card));
+            Map<Long, Card> cardMap = allCards.stream()
+                .collect(Collectors.toMap(Card::getId, card -> card));
 
             List<CardDto> sortedCardDtos = new ArrayList<>();
             Long currentCardId = deck.getHeadCardId();
@@ -146,9 +146,9 @@ public class BoardService {
             boardItemsList.add(boardItems);
         }
 
-        return new BoardDto(findBoard.getId(), findBoard.getTitle(), findBoard.getDescription(), boardItemsList);
+        return new BoardDto(findBoard.getId(), findBoard.getTitle(), findBoard.getDescription(),
+            boardItemsList);
     }
-
 
 
 }
