@@ -6,10 +6,10 @@ import com.sparta.trello.domain.boardMember.repository.BoardMemberAdapter;
 import com.sparta.trello.domain.card.adapter.CardAdapter;
 import com.sparta.trello.domain.comment.dto.CommentResponseDto;
 import com.sparta.trello.domain.card.entity.Card;
+import com.sparta.trello.domain.comment.adapter.CommentAdapter;
 import com.sparta.trello.domain.comment.dto.CreateCommentRequestDto;
 import com.sparta.trello.domain.comment.dto.UpdateCommentRequestDto;
 import com.sparta.trello.domain.comment.entity.Comment;
-import com.sparta.trello.domain.comment.repository.CommentAdapter;
 import com.sparta.trello.domain.user.entity.User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -31,9 +31,7 @@ public class CommentService {
 
         // 보드 멤버 검증
         Card card = cardAdapter.findById(createCommentRequestDto.getCardId());
-        Board board = card.getDeck().getBoard();
-        BoardMember boardMember = boardMemberAdapter.findByBoardAndUser(board, user);
-        boardMemberAdapter.validateBoardMember(boardMember);
+        validateBoardMemberByCardAndUser(card, user);
 
         Comment comment = Comment.builder()
             .user(user)
@@ -52,9 +50,7 @@ public class CommentService {
         commentAdapter.validateCommentOwnership(comment, user);
 
         // 보드 멤버 검증
-        Board board = comment.getCard().getDeck().getBoard();
-        BoardMember boardMember = boardMemberAdapter.findByBoardAndUser(board, user);
-        boardMemberAdapter.validateBoardMember(boardMember);
+        validateBoardMemberByCommentAndUser(comment, user);
 
         comment.setContent(updateCommentRequestDto.getContent());
         Comment updatedComment = commentAdapter.save(comment);
@@ -67,10 +63,20 @@ public class CommentService {
         commentAdapter.validateCommentOwnership(comment, user);
 
         // 보드 멤버 검증
+        validateBoardMemberByCommentAndUser(comment, user);
+
+        commentAdapter.delete(comment);
+    }
+
+    private void validateBoardMemberByCardAndUser(Card card, User user) {
+        Board board = card.getDeck().getBoard();
+        BoardMember boardMember = boardMemberAdapter.findByBoardAndUser(board, user);
+        boardMemberAdapter.validateBoardMember(boardMember);
+    }
+
+    private void validateBoardMemberByCommentAndUser(Comment comment, User user) {
         Board board = comment.getCard().getDeck().getBoard();
         BoardMember boardMember = boardMemberAdapter.findByBoardAndUser(board, user);
         boardMemberAdapter.validateBoardMember(boardMember);
-
-        commentAdapter.delete(comment);
     }
 }
