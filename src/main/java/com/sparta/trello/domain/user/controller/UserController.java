@@ -46,7 +46,7 @@ public class UserController {
         return ResponseUtils.of(HttpStatus.CREATED, "회원가입 성공");
     }
 
-    @DeleteMapping("/withdraw")
+    @DeleteMapping("/withdrawal")
     public ResponseEntity<MessageResponseDto> withdraw(
         @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
