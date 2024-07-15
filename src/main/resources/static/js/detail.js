@@ -1,14 +1,11 @@
 (() => {
-  const $ = (select) => document.querySelectorAll(select);
+  const jQuery = window.jQuery; // jQuery를 별도의 변수에 할당
   const board = document.getElementById('board');
   const editBoardBtn = document.getElementById('editBoardBtn');
   const deleteBoardBtn = document.getElementById('deleteBoardBtn');
   const modal = document.getElementById('modal');
   const editBoardModal = document.getElementById('editBoardModal');
-  const modalTitle = document.getElementById('modal-title');
-  const modalDescription = document.getElementById('modal-description');
   const closeBtns = document.querySelectorAll('.close-btn');
-  const cardEditBtn = document.getElementById('edit-card-btn');
   const cardDeleteBtn = document.getElementById('delete-card-btn');
   const boardTitle = document.getElementById('board-title');
   const boardDescription = document.getElementById('board-description');
@@ -35,6 +32,10 @@
         const draggableIndex = Array.from(deck.querySelectorAll('.draggable')).indexOf(el);
 
         console.log(`Draggable ID: ${draggableId} - Deck Index: ${deckIndex}, Draggable Index: ${draggableIndex}`);
+
+        // 카드 위치 변경 요청
+        updateCardPosition(draggableId, deckId, draggableIndex);
+
         el.classList.remove('dragging');
       });
 
@@ -54,6 +55,10 @@
           const deckIndex = Array.from(board.children).indexOf(deck);
 
           console.log(`Deck ID: ${deckId} - Deck Index: ${deckIndex}`);
+
+          // 덱 위치 변경 요청
+          updateDeckPosition(deckId, deckIndex);
+
           deck.classList.remove('dragging');
         }
       });
@@ -93,6 +98,45 @@
     });
 
     board.addEventListener('dragover', handleScroll);
+  }
+
+  function updateDeckPosition(deckId, position) {
+    const data = {
+      position: position
+    };
+
+    jQuery.ajax({
+      type: 'PATCH',
+      url: '/decks/' + deckId,
+      data: JSON.stringify(data),
+      contentType: 'application/json;charset=utf-8',
+      success: function(result, status, xhr) {
+        console.log('덱 위치 변경 성공');
+      },
+      error: function(xhr, status, error) {
+        console.error('덱 위치 변경 실패:', error);
+      }
+    });
+  }
+
+  function updateCardPosition(cardId, deckId, index) {
+    const data = {
+      deckId: deckId,
+      index: index
+    };
+
+    jQuery.ajax({
+      type: 'PATCH',
+      url: '/cards/' + cardId,
+      data: JSON.stringify(data),
+      contentType: 'application/json;charset=utf-8',
+      success: function(result, status, xhr) {
+        console.log('카드 위치 변경 성공');
+      },
+      error: function(xhr, status, error) {
+        console.error('카드 위치 변경 실패:', error);
+      }
+    });
   }
 
   function handleScroll(event) {
@@ -182,24 +226,6 @@
     e.target.closest('.modal').style.display = 'none';
   }));
 
-  cardEditBtn.addEventListener('click', () => {
-    const newTitle = prompt("Edit card title:", modalTitle.textContent);
-    if (newTitle !== null) {
-      modalTitle.textContent = newTitle;
-      if (currentEditingCard) currentEditingCard.querySelector('.el').textContent = newTitle;
-    }
-
-    const newDescription = prompt("Edit card description:", modalDescription.textContent);
-    if (newDescription !== null) {
-      modalDescription.textContent = newDescription;
-    }
-
-    const data = {
-      title: newTitle,
-      description: newDescription
-    }
-  });
-
   cardDeleteBtn.addEventListener('click', () => {
     if (currentEditingCard && confirm("Are you sure you want to delete this card?")) {
       currentEditingCard.parentNode.removeChild(currentEditingCard);
@@ -213,6 +239,6 @@
     }
   });
 
-  initDraggables($('li.draggable'));
-  initDecks($('.deck'));
+  initDraggables(document.querySelectorAll('li.draggable'));
+  initDecks(document.querySelectorAll('.deck'));
 })();
