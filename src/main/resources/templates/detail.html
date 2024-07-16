@@ -2,8 +2,8 @@
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta content="IE=edge" http-equiv="X-UA-Compatible">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
   <title>trello</title>
   <link rel="stylesheet" th:href="@{/css/reset.css}">
   <link rel="stylesheet" th:href="@{/css/style.css}">
@@ -19,7 +19,7 @@
 <button id="deleteBoardBtn">보드 삭제</button>
 <button id="logout-button">로그아웃</button>
 <div id="board">
-  <div class="deck" draggable="true" data-id="1"
+  <div class="deck" data-id="1" draggable="true"
        th:data-id="${items.getDeck().getId()}" th:each="items : ${board.getBoardItems()}">
     <div class="deck-header">
       <div class="deck-menu">
@@ -29,7 +29,7 @@
       <h2 th:text="${items.getDeck().getTitle()}">Deck 1</h2>
     </div>
     <ul class="card-list">
-      <li class="draggable" draggable="true" data-id="1"
+      <li class="draggable" data-id="1" draggable="true"
           th:data-id="${cards.getId()}" th:each="cards : ${items.getCards()}">
         <div class="el" th:text="${cards.getTitle()}">HTML</div>
       </li>
@@ -38,7 +38,7 @@
   </div>
 </div>
 
-<div id="modal" class="modal">
+<div class="modal" id="modal">
   <div class="modal-content">
     <div>
       <button id="edit-card-btn">수정</button>
@@ -58,43 +58,43 @@
       <!-- Comments will be appended here -->
     </ul>
     <textarea id="new-comment" placeholder="Add a comment"></textarea>
-    <button id="add-comment-btn" class="bottom-button-design">Add Comment</button>
+    <button class="bottom-button-design" id="add-comment-btn">Add Comment</button>
   </div>
 </div>
 
 
-<div id="editBoardModal" class="modal">
+<div class="modal" id="editBoardModal">
   <div class="modal-content">
     <span class="close-btn">&times;</span>
     <h2>Edit Board</h2>
     <label for="board-name-input">Board Name</label>
-    <input type="text" id="board-name-input" th:text="${board.getTitle()}">
+    <input id="board-name-input" th:text="${board.getTitle()}" type="text">
     <label for="board-description-input">Board Description</label>
     <textarea id="board-description-input"
               th:text="${board.getDescription()}">Board Description</textarea>
-    <button id="save-board-btn" class="bottom-button-design">Save</button>
+    <button class="bottom-button-design" id="save-board-btn">Save</button>
   </div>
 </div>
 
 <!-- 카드 생성 -->
-<div id="addCardModal" class="modal">
+<div class="modal" id="addCardModal">
   <div class="modal-content">
     <span class="close-btn">&times;</span>
     <h2 id="card-modal-title">새 카드 작성</h2>
-    <form id="addCardForm" data-mode="add" data-card-id="">
+    <form data-card-id="" data-mode="add" id="addCardForm">
       <label for="card-title-input">Card Title</label>
-      <input type="text" id="card-title-input" placeholder="Enter card title" required>
+      <input id="card-title-input" placeholder="Enter card title" required type="text">
 
       <label for="card-description-input">Description</label>
       <textarea id="card-description-input" placeholder="Enter description" required></textarea>
 
       <label for="card-start-date">Start Date</label>
-      <input type="date" id="card-start-date">
+      <input id="card-start-date" type="date">
 
       <label for="card-due-date">Due Date</label>
-      <input type="date" id="card-due-date">
+      <input id="card-due-date" type="date">
 
-      <button type="submit" id="card-form-submit-btn" class="bottom-button-design">Add Card</button>
+      <button class="bottom-button-design" id="card-form-submit-btn" type="submit">Add Card</button>
     </form>
   </div>
 </div>
@@ -103,15 +103,18 @@
   function getCookie(name) {
     const value = `; ${document.cookie}`;
     const parts = value.split(`; ${name}=`);
-    if (parts.length === 2) return parts.pop().split(';').shift();
+    if (parts.length === 2) {
+      return parts.pop().split(';').shift();
+    }
     return null;
   }
+
   function deleteCookie(name) {
     document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
   }
 
   const accessToken = getCookie('Authorization');
-  if(accessToken === undefined || accessToken === '') {
+  if (accessToken === undefined || accessToken === '') {
     location.href = '/user/login';
   }
 
@@ -121,11 +124,11 @@
       type: 'post',
       url: '/users/logout'
     })
-    .done(function(result, status, xhr) {
+    .done(function (result, status, xhr) {
       deleteCookie(accessToken);
       location.replace('/users/login');
     })
-    .fail(function(xhr, status, er) {
+    .fail(function (xhr, status, er) {
       console.log("로그아웃 실패");
     });
   });
@@ -429,15 +432,15 @@
     })
     .done(function (result, status, xhr) {
       // 카드 내용
-      $('#modal-title').text(result.title);
-      $('#modal-description').text(result.description);
-      $('#modal-start-date').text(result.startDate);
-      $('#modal-due-date').text(result.dueDate);
+      $('#modal-title').text(result.data.title);
+      $('#modal-description').text(result.data.description);
+      $('#modal-start-date').text(result.data.startDate);
+      $('#modal-due-date').text(result.data.dueDate);
 
       // 댓글 내용
       const commentList = $('#comment-list');
       commentList.empty(); // 기존 댓글 목록을 비우기
-      result.comments.forEach(function (comment) {
+      result.data.comments.forEach(function (comment) {
         commentList.append(`
         <li data-comment-id="${comment.id}">
           <span>${comment.content}</span>
