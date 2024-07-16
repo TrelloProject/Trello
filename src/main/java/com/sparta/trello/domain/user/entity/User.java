@@ -18,6 +18,7 @@ public class User extends TimeStampEntity {
 
     private String name;
 
+    @Column(unique = true)
     private String username;
 
     private String password;
