@@ -3,7 +3,7 @@ package com.sparta.trello.domain.user.controller;
 import com.sparta.trello.auth.UserDetailsImpl;
 import com.sparta.trello.common.response.MessageResponseDto;
 import com.sparta.trello.common.response.ResponseUtils;
-import com.sparta.trello.domain.user.dto.GrantBoardRoleDto;
+import com.sparta.trello.domain.user.dto.GrantBoardRoleRequestDto;
 import com.sparta.trello.domain.user.dto.SignupRequestDto;
 import com.sparta.trello.domain.user.service.UserService;
 import jakarta.validation.Valid;
@@ -46,7 +46,7 @@ public class UserController {
         return ResponseUtils.of(HttpStatus.CREATED, "회원가입 성공");
     }
 
-    @DeleteMapping("/withdraw")
+    @DeleteMapping("/withdrawal")
     public ResponseEntity<MessageResponseDto> withdraw(
         @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
@@ -57,9 +57,9 @@ public class UserController {
     @PutMapping("/role")
     public ResponseEntity<MessageResponseDto> grantRole(
         @AuthenticationPrincipal UserDetailsImpl userDetails,
-        @Valid @RequestBody GrantBoardRoleDto grantBoardRoleDto
+        @Valid @RequestBody GrantBoardRoleRequestDto grantBoardRoleRequestDto
     ) {
-        userService.grantRole(userDetails.getUser(), grantBoardRoleDto);
+        userService.grantRole(userDetails.getUser(), grantBoardRoleRequestDto);
         return ResponseUtils.of(HttpStatus.OK, "권한 부여 성공");
     }
 }
