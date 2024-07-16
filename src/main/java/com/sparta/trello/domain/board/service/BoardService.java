@@ -14,18 +14,14 @@ import com.sparta.trello.domain.boardMember.repository.BoardMemberAdapter;
 import com.sparta.trello.domain.boardMember.repository.BoardMemberRepository;
 import com.sparta.trello.domain.card.adapter.CardAdapter;
 import com.sparta.trello.domain.card.dto.CardDto;
-import com.sparta.trello.domain.card.entity.Card;
+import com.sparta.trello.domain.deck.adapter.DeckAdapter;
 import com.sparta.trello.domain.deck.dto.DeckDto;
-import com.sparta.trello.domain.deck.entity.Deck;
-import com.sparta.trello.domain.deck.repository.DeckAdapter;
 import com.sparta.trello.domain.user.adapter.UserAdapter;
 import com.sparta.trello.domain.user.entity.User;
 import com.sparta.trello.exception.custom.boardMember.detail.BoardMemberCodeEnum;
 import com.sparta.trello.exception.custom.boardMember.detail.BoardMemberDetailCustomException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -107,48 +103,21 @@ public class BoardService {
     @Transactional(readOnly = true)
     public BoardDto getBoard(Long boardId) {
         List<BoardItemsDto> boardItemsList = new ArrayList<>();
+        Board board = boardAdapter.findById(boardId);
 
-        Board findBoard = boardAdapter.findById(boardId);
-        Long currentDeckId = findBoard.getHeadDeckId();
-        List<Deck> findDecks = deckAdapter.findByBoard(findBoard);
-        Map<Long, Deck> deckMap = findDecks.stream()
-            .collect(Collectors.toMap(Deck::getId, deck -> deck));
-
-        List<DeckDto> sortedDeckDtos = new ArrayList<>();
-        while (currentDeckId != null) {
-            Deck currentDeck = deckMap.get(currentDeckId);
-            if (currentDeck == null) {
-                break; // 현재 Deck ID에 해당하는 Deck이 없으면 중단
-            }
-            sortedDeckDtos.add(new DeckDto(currentDeck));
-            currentDeckId = currentDeck.getNextId();
-        }
+        List<DeckDto> sortedDeckDtos = deckAdapter.getSortedDecks(boardId).stream()
+            .map(DeckDto::new).toList();
 
         for (DeckDto deckDto : sortedDeckDtos) {
-            Deck deck = deckMap.get(deckDto.getId());
-            List<Card> allCards = cardAdapter.findAllByDeckId(deck.getId());
-            Map<Long, Card> cardMap = allCards.stream()
-                .collect(Collectors.toMap(Card::getId, card -> card));
-
-            List<CardDto> sortedCardDtos = new ArrayList<>();
-            Long currentCardId = deck.getHeadCardId();
-            while (currentCardId != null) {
-                Card currentCard = cardMap.get(currentCardId);
-                if (currentCard == null) {
-                    break; // 현재 Card ID에 해당하는 Card가 없으면 중단
-                }
-                sortedCardDtos.add(new CardDto(currentCard));
-                currentCardId = currentCard.getNextId();
-            }
+            List<CardDto> sortedCardDtos = cardAdapter.getSortedCards(deckDto.getId()).stream()
+                .map(CardDto::new).toList();
 
             // Create a new BoardItemsDto for each deck and add it to the list
             BoardItemsDto boardItems = new BoardItemsDto(deckDto, sortedCardDtos);
             boardItemsList.add(boardItems);
         }
 
-        return new BoardDto(findBoard.getId(), findBoard.getTitle(), findBoard.getDescription(),
+        return new BoardDto(board.getId(), board.getTitle(), board.getDescription(),
             boardItemsList);
     }
-
-
 }
