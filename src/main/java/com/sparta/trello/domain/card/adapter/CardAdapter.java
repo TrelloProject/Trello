@@ -64,7 +64,7 @@ public class CardAdapter {
         return sortedCards.get(index);
     }
 
-    private List<Card> getSortedCards(Long deckId) {
+    public List<Card> getSortedCards(Long deckId) {
         List<Card> cards = findAllByDeckId(deckId);
 
         Map<Long, Card> cardMap = cards.stream()
